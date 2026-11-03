@@ -27,19 +27,19 @@ assessment:
 progress_sync:
   run_id: "1a2ca52a-3b6e-48b3-9f94-916151c704e7"
   grouping_mode: none
-  execution_mode: saved
+  execution_mode: phase-by-phase
   plan_start_time: "2026-11-03T21:08:43Z"
   plan_completed_time: ""
-  execution_start_time: ""
-  execution_completed_time: ""
-  validation_start_time: ""
-  validation_completed_time: ""
-  total_phases: 0
-  completed_phases: 0
+  execution_start_time: "2026-11-03T21:22:36Z"
+  execution_completed_time: "2026-11-03T22:04:00Z"
+  validation_start_time: "2026-11-03T21:22:36Z"
+  validation_completed_time: "2026-11-03T22:04:00Z"
+  total_phases: 6
+  completed_phases: 6
   total_modules: 3
   completed_modules: 0
-  total_tasks: 0
-  completed_tasks: 0
-  total_commits: 0
-  build_verified: false
-  test_verified: false
+  total_tasks: 6
+  completed_tasks: 6
+  total_commits: 2
+  build_verified: true
+  test_verified: true
