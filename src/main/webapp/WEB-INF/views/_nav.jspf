@@ -1,0 +1,14 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<nav class="topnav">
+  <strong>Tostado</strong>
+  <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
+  <a href="${pageContext.request.contextPath}/crud/clientes">Clientes</a>
+  <a href="${pageContext.request.contextPath}/crud/productos">Productos</a>
+  <a href="${pageContext.request.contextPath}/crud/insumos">Inventario</a>
+  <a href="${pageContext.request.contextPath}/crud/empleados">Empleados</a>
+  <a href="${pageContext.request.contextPath}/mesas">Mesas</a>
+  <a href="${pageContext.request.contextPath}/pos">POS</a>
+  <a href="${pageContext.request.contextPath}/reportes">Reportes</a>
+  <span class="role">${role}</span>
+  <a href="${pageContext.request.contextPath}/logout">Salir</a>
+</nav>

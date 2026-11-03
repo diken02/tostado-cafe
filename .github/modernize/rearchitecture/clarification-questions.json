@@ -1,0 +1,610 @@
+﻿{
+    "schema":  "clarification-questions/v1",
+    "generated_at":  "2026-11-03T21:12:26Z",
+    "user_input":  "Convert the Node.js/HTML cafeteria application in Workspace into a Java Servlet/JSP Maven web application using Jakarta-compatible APIs where practical, MySQL, JSP EL/JSTL, and HTML forms. Preserve existing cafeteria features and practical CRUD for clientes, productos/menu, inventario, empleados, and mesas, authentication, and database.sql. Keep existing files unless a precise migration plan requires deletion. Use packages com.tostado.cafeteria.controller, model, repository, service, and config; add servlet routes, JSP pages, MySQL JDBC dependency, and README Java setup. Run the smallest Maven syntax/build validation. Report all changed files, validation performed, and assumptions.",
+    "title":  "Node.js Cafeteria to Jakarta Servlet/JSP",
+    "assessment_snapshot":  {
+                                "intro":  "The project profile identifies a small structural rewrite with:",
+                                "bullets":  [
+                                                "Node.js/HTML application plus existing CSS, browser JavaScript, SQL database integration, and 2480 LOC",
+                                                "Target architecture: Jakarta-compatible Servlet/JSP Maven web application with MySQL JDBC",
+                                                "Required migration scope includes customers, menu/products, inventory, employees, tables, authentication, and database.sql"
+                                            ]
+                            },
+    "proposed_outcome":  "Rewrite the cafeteria application in-place as a Jakarta Servlet/JSP Maven web application while preserving existing features, HTML forms, JSP EL/JSTL rendering, practical CRUD flows, authentication, database.sql, and existing files unless a precise plan requires removal.",
+    "scope":  [
+                  "frontend",
+                  "backend",
+                  "generic"
+              ],
+    "status":  "awaiting_answers",
+    "questions":  [
+                      {
+                          "id":  "F1",
+                          "kit":  "frontend",
+                          "field":  "target.framework",
+                          "title":  "Target UI framework",
+                          "question":  "Which target frontend framework and version should the rewrite use?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "Jakarta Servlet/JSP (Servlet 6 + JSP 3.1)",
+                                              "label":  "Jakarta Servlet/JSP (Servlet 6 + JSP 3.1)"
+                                          },
+                                          {
+                                              "value":  "Jakarta Servlet/JSP (Servlet 5 + JSP 3.0)",
+                                              "label":  "Jakarta Servlet/JSP (Servlet 5 + JSP 3.0)"
+                                          },
+                                          {
+                                              "value":  "Jakarta Server Faces 4",
+                                              "label":  "Jakarta Server Faces 4"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "Jakarta Servlet/JSP (Servlet 6 + JSP 3.1)",
+                          "default":  null,
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F2",
+                          "kit":  "frontend",
+                          "field":  "target.component_library",
+                          "title":  "Component library",
+                          "question":  "What target component or UI library should the new JSP frontend use?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "none; existing HTML/CSS with JSTL",
+                                              "label":  "None; preserve existing HTML/CSS with JSTL"
+                                          },
+                                          {
+                                              "value":  "Bootstrap",
+                                              "label":  "Bootstrap"
+                                          },
+                                          {
+                                              "value":  "other established UI library",
+                                              "label":  "Other established UI library"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "none; existing HTML/CSS with JSTL",
+                          "default":  null,
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F3",
+                          "kit":  "frontend",
+                          "field":  "visual.screenshots",
+                          "title":  "Current UI evidence",
+                          "question":  "Provide screenshots, screen recordings, or URLs that show the current cafeteria UI and key screen states.",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "text",
+                          "options":  [
+
+                                      ],
+                          "allow_other":  false,
+                          "recommended":  null,
+                          "default":  null,
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F4",
+                          "kit":  "frontend",
+                          "field":  "visual.design_system",
+                          "title":  "Design system source",
+                          "question":  "What design system or visual source should the JSP pages preserve?",
+                          "importance":  "required",
+                          "impact":  4,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "match existing CSS pixel-by-pixel",
+                                              "label":  "Match existing CSS pixel-by-pixel"
+                                          },
+                                          {
+                                              "value":  "refreshed compatible styling",
+                                              "label":  "Use compatible refreshed styling"
+                                          },
+                                          {
+                                              "value":  "existing CSS files only",
+                                              "label":  "Preserve existing CSS files without redesign"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "match existing CSS pixel-by-pixel",
+                          "default":  "match existing pixel-by-pixel using extracted CSS custom properties",
+                          "prefilled":  true,
+                          "prefilled_value":  "existing CSS files only",
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F5",
+                          "kit":  "frontend",
+                          "field":  "compliance.accessibility",
+                          "title":  "Accessibility standard",
+                          "question":  "Which accessibility standard should the rewritten JSP pages target?",
+                          "importance":  "recommended",
+                          "impact":  4,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "WCAG 2.1 AA",
+                                              "label":  "WCAG 2.1 AA"
+                                          },
+                                          {
+                                              "value":  "WCAG 2.2 AA",
+                                              "label":  "WCAG 2.2 AA"
+                                          },
+                                          {
+                                              "value":  "none / not required",
+                                              "label":  "None / not required"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "WCAG 2.1 AA",
+                          "default":  "WCAG 2.1 AA",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F6",
+                          "kit":  "frontend",
+                          "field":  "compatibility.browsers",
+                          "title":  "Browser targets",
+                          "question":  "Which browsers and runtime compatibility targets should be supported?",
+                          "importance":  "recommended",
+                          "impact":  3,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "modern evergreen",
+                                              "label":  "Modern evergreen browsers"
+                                          },
+                                          {
+                                              "value":  "Chrome, Firefox, Edge latest 2",
+                                              "label":  "Chrome, Firefox, and Edge, latest 2 versions"
+                                          },
+                                          {
+                                              "value":  "IE11",
+                                              "label":  "Internet Explorer 11"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "modern evergreen",
+                          "default":  "modern evergreen (Chrome, Firefox, Safari, Edge — latest 2 major versions)",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F7",
+                          "kit":  "frontend",
+                          "field":  "responsive.breakpoints",
+                          "title":  "Responsive strategy",
+                          "question":  "How should JSP pages behave across screen sizes?",
+                          "importance":  "recommended",
+                          "impact":  3,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "mobile-first with existing breakpoints",
+                                              "label":  "Mobile-first using existing breakpoints"
+                                          },
+                                          {
+                                              "value":  "desktop-only",
+                                              "label":  "Desktop-only"
+                                          },
+                                          {
+                                              "value":  "match current layout exactly",
+                                              "label":  "Match the current layout exactly"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "mobile-first with existing breakpoints",
+                          "default":  "mobile-first using existing breakpoints detected from codebase",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F8",
+                          "kit":  "frontend",
+                          "field":  "i18n.locales",
+                          "title":  "Internationalization locales",
+                          "question":  "Which locales, if any, are in scope for the JSP application?",
+                          "importance":  "optional",
+                          "impact":  2,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "preserve current locales",
+                                              "label":  "Preserve current locales"
+                                          },
+                                          {
+                                              "value":  "none",
+                                              "label":  "None / single-language application"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "preserve current locales",
+                          "default":  "preserve current locales; keep existing i18n library if present",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F9",
+                          "kit":  "frontend",
+                          "field":  "state_mgmt.preference",
+                          "title":  "Client state management",
+                          "question":  "What client-side state approach should JSP pages use, if any?",
+                          "importance":  "optional",
+                          "impact":  2,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "server-side JSP/session state",
+                                              "label":  "Server-rendered JSP with session state"
+                                          },
+                                          {
+                                              "value":  "minimal component state",
+                                              "label":  "Minimal browser component state"
+                                          },
+                                          {
+                                              "value":  "preserve existing pattern",
+                                              "label":  "Preserve the existing pattern"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "server-side JSP/session state",
+                          "default":  "preserve existing pattern if identifiable; otherwise recommend minimal (component state + server-state library)",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "F10",
+                          "kit":  "frontend",
+                          "field":  "routing.preference",
+                          "title":  "Routing strategy",
+                          "question":  "What routing strategy should JSP servlets and pages use?",
+                          "importance":  "optional",
+                          "impact":  3,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "servlet URL mappings",
+                                              "label":  "Servlet URL mappings and JSP forwarding"
+                                          },
+                                          {
+                                              "value":  "front controller",
+                                              "label":  "Front controller routing"
+                                          },
+                                          {
+                                              "value":  "framework default",
+                                              "label":  "Framework default routing"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "servlet URL mappings",
+                          "default":  "use servlet URL mappings and JSP forwarding by default",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "B1",
+                          "kit":  "backend",
+                          "field":  "target.framework",
+                          "title":  "Backend framework and version",
+                          "question":  "Which backend framework and major version should implement the Servlet/JSP application?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "Jakarta Servlet/JSP on Jakarta EE 10",
+                                              "label":  "Jakarta Servlet/JSP on Jakarta EE 10"
+                                          },
+                                          {
+                                              "value":  "Jakarta Servlet/JSP on Jakarta EE 9.1",
+                                              "label":  "Jakarta Servlet/JSP on Jakarta EE 9.1"
+                                          },
+                                          {
+                                              "value":  "Spring MVC 6/Jakarta compatibility layer",
+                                              "label":  "Spring MVC 6 with Jakarta-compatible APIs"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "Jakarta Servlet/JSP on Jakarta EE 10",
+                          "default":  null,
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "B2",
+                          "kit":  "backend",
+                          "field":  "api.contract_preservation",
+                          "title":  "Route and API preservation",
+                          "question":  "What route, form-action, payload, and response compatibility policy should apply to the existing application?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "must preserve",
+                                              "label":  "Must preserve existing routes and contracts"
+                                          },
+                                          {
+                                              "value":  "can break with versioning",
+                                              "label":  "May change with versioning"
+                                          },
+                                          {
+                                              "value":  "partial: preserve visible user flows",
+                                              "label":  "Partial: preserve visible cafeteria user flows only"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "must preserve",
+                          "default":  "must preserve",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "B3",
+                          "kit":  "backend",
+                          "field":  "data.migration_strategy",
+                          "title":  "MySQL migration strategy",
+                          "question":  "How should existing data and database.sql be migrated into MySQL?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "TBD / assess in research phase",
+                                              "label":  "TBD / assess in research phase"
+                                          },
+                                          {
+                                              "value":  "new schema",
+                                              "label":  "Create a new clean schema and migrate data"
+                                          },
+                                          {
+                                              "value":  "in-place",
+                                              "label":  "Preserve and alter the existing schema in place"
+                                          },
+                                          {
+                                              "value":  "no migration",
+                                              "label":  "Use database.sql as schema; seed no legacy data"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "TBD / assess in research phase",
+                          "default":  "TBD / assess in research phase",
+                          "prefilled":  true,
+                          "prefilled_value":  "TBD / assess in research phase",
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "B4",
+                          "kit":  "backend",
+                          "field":  "auth.framework",
+                          "title":  "Authentication framework",
+                          "question":  "Which authentication and authorization mechanism should protect the Servlet application?",
+                          "importance":  "recommended",
+                          "impact":  4,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "preserve existing auth mechanism; detect from codebase",
+                                              "label":  "Preserve existing mechanism and detect it from the codebase"
+                                          },
+                                          {
+                                              "value":  "Jakarta Security 3",
+                                              "label":  "Jakarta Security 3"
+                                          },
+                                          {
+                                              "value":  "custom servlet session auth",
+                                              "label":  "Custom servlet session authentication"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "preserve existing auth mechanism; detect from codebase",
+                          "default":  "preserve existing auth mechanism; detect from codebase",
+                          "prefilled":  true,
+                          "prefilled_value":  "preserve existing auth mechanism; detect from codebase",
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "B5",
+                          "kit":  "backend",
+                          "field":  "nfr.sla",
+                          "title":  "Performance and availability targets",
+                          "question":  "What SLA targets should the Java Servlet/JSP migration meet?",
+                          "importance":  "recommended",
+                          "impact":  3,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "match current production baseline",
+                                              "label":  "Match current production baseline"
+                                          },
+                                          {
+                                              "value":  "no special SLA",
+                                              "label":  "No special SLA requirements"
+                                          },
+                                          {
+                                              "value":  "p95 latency \u003c 200ms",
+                                              "label":  "p95 latency below 200 ms"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "match current production baseline",
+                          "default":  "match current production baseline; no regression",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "G1",
+                          "kit":  "generic",
+                          "field":  "success.definition",
+                          "title":  "Definition of done",
+                          "question":  "What outcome defines successful completion of the rewrite?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "feature parity with current system; all existing user-facing behaviors preserved",
+                                              "label":  "Feature parity with existing cafeteria behavior"
+                                          },
+                                          {
+                                              "value":  "feature parity verified by QA sign-off",
+                                              "label":  "Feature parity verified by QA sign-off"
+                                          },
+                                          {
+                                              "value":  "zero regressions in smoke test suite",
+                                              "label":  "Zero regressions in smoke tests"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "feature parity with current system; all existing user-facing behaviors preserved",
+                          "default":  "feature parity with the current system; all existing user-facing behaviors preserved",
+                          "prefilled":  true,
+                          "prefilled_value":  "feature parity with current system; all existing user-facing behaviors preserved",
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "G2",
+                          "kit":  "generic",
+                          "field":  "out_of_scope",
+                          "title":  "Explicit exclusions",
+                          "question":  "What components, pages, services, or behaviors, if any, are explicitly out of scope?",
+                          "importance":  "recommended",
+                          "impact":  4,
+                          "type":  "text",
+                          "options":  [
+
+                                      ],
+                          "allow_other":  false,
+                          "recommended":  null,
+                          "default":  "no explicit exclusions; agent will infer from project structure",
+                          "prefilled":  true,
+                          "prefilled_value":  "keep existing files unless a precise migration plan requires deletion",
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "G3",
+                          "kit":  "generic",
+                          "field":  "existing_tests.posture",
+                          "title":  "Test suite policy",
+                          "question":  "How should existing tests be treated during the rewrite?",
+                          "importance":  "recommended",
+                          "impact":  4,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "must pass",
+                                              "label":  "Existing tests must pass"
+                                          },
+                                          {
+                                              "value":  "can rewrite",
+                                              "label":  "Tests may be rewritten with equivalent coverage"
+                                          },
+                                          {
+                                              "value":  "ignore",
+                                              "label":  "Ignore outdated tests and add new coverage"
+                                          },
+                                          {
+                                              "value":  "partial",
+                                              "label":  "Only specified test suites must pass"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "must pass",
+                          "default":  "must pass",
+                          "prefilled":  false,
+                          "prefilled_value":  null,
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "G4",
+                          "kit":  "generic",
+                          "field":  "target.output_location",
+                          "title":  "Rewrite output location",
+                          "question":  "Where should the rewritten Java application be written?",
+                          "importance":  "required",
+                          "impact":  5,
+                          "type":  "single_select",
+                          "options":  [
+                                          {
+                                              "value":  "in-place",
+                                              "label":  "In-place, in the existing workspace"
+                                          },
+                                          {
+                                              "value":  "new sibling directory",
+                                              "label":  "A new sibling directory"
+                                          }
+                                      ],
+                          "allow_other":  true,
+                          "recommended":  "in-place",
+                          "default":  "new sibling directory: \u003cproject-name\u003e-new",
+                          "prefilled":  true,
+                          "prefilled_value":  "in-place",
+                          "answer":  null,
+                          "depends_on":  null
+                      },
+                      {
+                          "id":  "G5",
+                          "kit":  "generic",
+                          "field":  "constraints.additional",
+                          "title":  "Additional constraints",
+                          "question":  "What additional constraints, dependencies, compliance rules, or exclusions should govern the rewrite?",
+                          "importance":  "optional",
+                          "impact":  3,
+                          "type":  "text",
+                          "options":  [
+
+                                      ],
+                          "allow_other":  false,
+                          "recommended":  null,
+                          "default":  "None beyond the decisions listed in this specification.",
+                          "prefilled":  true,
+                          "prefilled_value":  "None beyond the decisions listed in this specification.",
+                          "answer":  null,
+                          "depends_on":  null
+                      }
+                  ]
+}

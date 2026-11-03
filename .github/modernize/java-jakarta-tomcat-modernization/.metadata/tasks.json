@@ -1,0 +1,95 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/appmod-modernization/main/schemas/tasks-schema.json",
+  "description": "Planning tasks for the complete Jakarta Servlet/JSP modernization of the Tostado cafeteria application.",
+  "tasks": [
+    {
+      "type": "upgrade",
+      "id": "001-java17-maven-tomcat-foundation",
+      "description": "Create the Java 17 Maven foundation for Tomcat 10.1",
+      "reason": "The target runtime and build structure are required before application transformation.",
+      "requirements": "Add pom.xml and Maven packaging for Jakarta Servlet API 6.0+ and JSP-compatible deployment on Apache Tomcat 10.1. Establish Java 17 source/target settings, dependencies, and the src/main/java plus src/main/webapp project layout without removing existing application files.",
+      "dependencies": [],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "002-auth-config-mvc-foundation",
+      "description": "Create authentication, role protection, JDBC configuration, and shared MVC infrastructure",
+      "reason": "All protected features need a common security and data-access foundation.",
+      "requirements": "Implement login sessions, logout, password verification, role checks, protected routes, centralized JDBC configuration using environment-configurable credentials, and the com.tostado.cafeteria.controller, model, repository, service, and config package structure. Add reusable JSP components for navigation, errors, flash messages, and shared page layout.",
+      "dependencies": ["001-java17-maven-tomcat-foundation"],
+      "skills": [],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "003-crud-customers-products-inventory-employees",
+      "description": "Implement CRUD for customers, products/menu, inventory, suppliers, and employees",
+      "reason": "The core data-management workflows require complete server-backed CRUD operations.",
+      "requirements": "Preserve existing MySQL entities and implement full create, read, update, and delete behavior for customers, products/menu, inventory supplies and stock, suppliers, recipes/purchases where represented by the schema, and employees. Use PreparedStatements for every JDBC operation. Add role-aware list and mutation routes: administrator-only employee and administrative mutations, with existing staff role permissions for inventory and customer operations. Keep password hashes only and never render passwords.",
+      "dependencies": ["002-auth-config-mvc-foundation"],
+      "skills": [],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "true",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "004-mesas-pedidos-pos-pagos",
+      "description": "Modernize tables, orders/POS, and payment workflows",
+      "reason": "The operational order flow is the primary transaction workflow in the cafeteria application.",
+      "requirements": "Implement table views and status updates, POS order creation, customer assignment, item and payment handling, order status transitions, wait-number behavior, and administrator/cashier/waiter/barista role permissions. Preserve database relationships and referential integrity, use JDBC transactions where multiple records change, and use parameterized statements for all queries and mutations.",
+      "dependencies": ["003-crud-customers-products-inventory-employees"],
+      "skills": [],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "true",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "005-dashboard-reports-ui-docs-validation",
+      "description": "Complete dashboard, reports, shared UI, documentation, and Maven verification",
+      "reason": "The remaining presentation and delivery work connects all migrated workflows into the final application.",
+      "requirements": "Implement dashboard and report pages, preserve the existing application scope, add shared Jakarta JSP navigation and existing CSS/JavaScript assets under src/main/webapp, and document Java, Maven, MySQL, Tomcat 10.1, database setup, environment configuration, deployment, and application startup in README. Preserve existing files and database.sql, run the Maven build, and run available tests. If Maven or a build prerequisite is unavailable, report the exact missing prerequisite and command needed to verify it.",
+      "dependencies": ["004-mesas-pedidos-pos-pagos"],
+      "skills": [],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "security",
+      "id": "006-cve-remediation-security-review",
+      "description": "Scan dependencies for CVEs and remediate vulnerabilities",
+      "reason": "A security review is required before the modernization is considered complete.",
+      "requirements": "Scan Maven dependencies for known CVEs, upgrade vulnerable dependencies to patched versions, document any major-version breaking change risks, verify password handling and credentials remain outside source, confirm database operations use parameterized PreparedStatements, and rebuild and test the application after remediation.",
+      "dependencies": ["005-dashboard-reports-ui-docs-validation"],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    }
+  ],
+  "metadata": {
+    "planName": "java-jakarta-tomcat-modernization",
+    "projectName": "Tostado Cafetería",
+    "language": "java",
+    "createdAt": "2026-11-03T16:14:54-05:00",
+    "version": "1.0"
+  }
+}

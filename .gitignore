@@ -1,0 +1,8 @@
+.env
+target/
+server/.env
+server/node_modules/
+*.log
+*.iml
+.idea/
+.vscode/

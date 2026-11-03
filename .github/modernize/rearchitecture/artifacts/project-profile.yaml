@@ -1,0 +1,45 @@
+project:
+  scope_path: "."
+  loc: 2480
+  languages: [JavaScript, HTML, CSS, SQL]
+  git: true
+  structure:
+    css: "Existing application stylesheets"
+    js: "Existing browser JavaScript"
+    server: "Existing Node.js server files"
+    jsp_webapp: "New Java Servlet/JSP application content"
+  notes: "Small Node.js/HTML cafeteria application being structurally rewritten to Jakarta Servlet/JSP Maven and MySQL."
+assessment:
+  change_type: rewrite
+  rationale: |
+    Cross-stack rewrite from Node.js/HTML to Java Servlet/JSP Maven using Jakarta-compatible APIs.
+  transformations:
+    - fromStack: Node.js/HTML
+      fromStackVersion: "Unspecified"
+      toStack: Jakarta Servlet/JSP Maven
+      toStackVersion: "Java 17; Jakarta Servlet/JSP compatible with Tomcat 10.1"
+    - fromStack: SQL database integration
+      fromStackVersion: "Existing application database"
+      toStack: MySQL JDBC
+      toStackVersion: "MySQL database.sql schema; Maven WAR"
+  grouping_needed: false
+  deep_planning: undecided
+progress_sync:
+  run_id: "1a2ca52a-3b6e-48b3-9f94-916151c704e7"
+  grouping_mode: none
+  execution_mode: saved
+  plan_start_time: "2026-11-03T21:08:43Z"
+  plan_completed_time: ""
+  execution_start_time: ""
+  execution_completed_time: ""
+  validation_start_time: ""
+  validation_completed_time: ""
+  total_phases: 0
+  completed_phases: 0
+  total_modules: 3
+  completed_modules: 0
+  total_tasks: 0
+  completed_tasks: 0
+  total_commits: 0
+  build_verified: false
+  test_verified: false

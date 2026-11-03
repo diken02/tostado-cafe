@@ -582,3 +582,52 @@ Antes de publicar el sistema:
 - Restringir `CORS_ORIGINS` a los dominios reales.
 - No subir `.env` ni respaldos SQL.
 - Usar HTTPS en un entorno de produccion.
+
+## Aplicación Jakarta Servlet/JSP para Tomcat 10.1
+
+El proyecto moderno se agrega junto al frontend y servidor Node.js originales, sin sustituirlos.
+
+### Requisitos Java
+
+- JDK 17.
+- Apache Maven 3.9.x.
+- Apache Tomcat 10.1.x.
+- MySQL 8 y el esquema de `database.sql`.
+
+### Compilar
+
+```powershell
+java -version
+mvn -version
+mvn clean verify
+```
+
+El resultado es `target/tostado-cafeteria.war`.
+
+### Configuración de MySQL
+
+Inicialice la base de datos con `database.sql`. Configure las credenciales mediante variables de entorno, nunca en el código:
+
+```powershell
+$env:DB_HOST="localhost"
+$env:DB_PORT="3306"
+$env:DB_NAME="tostado_cafe"
+$env:DB_USER="cafeteria_app"
+$env:DB_PASSWORD="<contraseña>"
+```
+
+### Despliegue
+
+1. Inicie MySQL.
+2. Implante el archivo WAR como `tostado-cafeteria.war` en Tomcat 10.1, o renómbrelo a `ROOT.war`.
+3. Configure las variables MySQL en el servicio/proceso de Tomcat.
+4. Abra `http://localhost:8080/tostado-cafeteria/login`.
+
+Las rutas están protegidas con sesión HTTP y verificación de rol. Los repositorios usan `PreparedStatement`. Las contraseñas se almacenan con BCrypt. El código original HTML/CSS/JavaScript y Express permanece disponible y no se reemplaza.
+
+### Pruebas
+
+```powershell
+mvn test
+mvn clean verify
+```
