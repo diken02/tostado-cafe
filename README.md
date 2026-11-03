@@ -98,7 +98,10 @@ tostado_cafeteria_/
 Desde la carpeta principal:
 
 ```powershell
-cd C:\Users\DELL\Desktop\tostado_cafeteria_\server
+
+coloca la ubicación de la carpeta
+ejemplo
+cd C:\tostado_cafeteria_\server
 npm.cmd install
 ```
 
