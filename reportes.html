@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reportes · Tostado</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-title="Reportes">
+<main id="app">
+<div class="page-head"><div><h1>Reportes</h1><p>Análisis de ventas y desempeño</p></div><button class="btn secondary">Exportar PDF</button></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="filters" style="margin:0"><select><option>Últimos 7 días</option><option>Últimos 30 días</option><option>Este año</option></select><input type="date"><input type="date"><button class="btn">Aplicar</button></div></div>
+<div class="grid cols-3">
+<div class="card stat"><div class="label">Venta histórica</div><div class="value">$0.00</div></div>
+</div>
+<div class="grid cols-2" style="margin-top:1.25rem">
+<div class="card"><h3>Ventas por mes</h3><div class="chart-wrap"><div class="chart"><div style="height:40%"><span>Ene</span></div><div style="height:55%"><span>Feb</span></div><div style="height:50%"><span>Mar</span></div><div style="height:70%"><span>Abr</span></div><div style="height:85%"><span>May</span></div><div style="height:100%"><span>Jun</span></div></div></div></div>
+<div class="card"><h3>Productos más vendidos</h3><table><thead><tr><th>Producto</th><th>Unidades</th><th>Ingresos</th></tr></thead><tbody>
+<tr><td>Capuchino</td><td>312</td><td>$1,404</td></tr><tr><td>Latte</td><td>268</td><td>$1,286</td></tr><tr><td>Croissant</td><td>201</td><td>$703</td></tr><tr><td>Cheesecake</td><td>142</td><td>$781</td></tr></tbody></table></div>
+</div>
+</main>
+<script src="js/app.js?v=4"></script>
+<script>
+(async function(){
+ if(!window.tostadoToken){location.href="index.html";return;}
+ document.querySelector("main").innerHTML='<div class="page-head"><div><h1>Reportes</h1><p>Análisis real de pedidos y ventas</p></div></div><div class="grid cols-3" id="reportStats"></div>'+
+ '<div class="grid cols-2" style="margin-top:1.25rem"><div class="card"><h3>Ventas por día</h3><div class="chart-wrap"><div class="chart" id="salesChart"></div></div></div><div class="card"><h3>Ventas por categoría</h3><div id="pieChart" style="width:220px;height:220px;border-radius:50%;margin:20px auto"></div><div id="categoryLegend"></div></div></div>'+
+ '<div class="card" style="margin-top:1.25rem"><h3>Productos más vendidos</h3><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Unidades</th><th>Ingresos</th></tr></thead><tbody id="topProducts"></tbody></table></div></div>';
+ try{
+  var r=await tostadoApiFetch("/api/reportes/resumen"),d=await r.json();if(!r.ok)throw new Error(d.error);
+  reportStats.innerHTML='<div class="card stat"><div class="label">Venta histórica</div><div class="value">$'+Number(d.ventas.ventasHistoricas||0).toFixed(2)+'</div></div><div class="card stat"><div class="label">Ventas hoy</div><div class="value">$'+Number(d.ventas.ventasHoy||0).toFixed(2)+'</div></div><div class="card stat"><div class="label">Pedidos totales</div><div class="value">'+d.ventas.pedidos+'</div></div>';
+  var max=Math.max.apply(null,d.porDia.map(function(x){return Number(x.ventas)}).concat([1]));
+  salesChart.innerHTML=d.porDia.reverse().map(function(x){return '<div style="height:'+Math.max(10,Number(x.ventas)/max*100)+'%"><span>'+String(x.dia).slice(5)+'</span></div>'}).join("")||"Sin datos";
+  var total=d.porCategoria.reduce(function(s,x){return s+Number(x.ventas)},0),colors=["#d97727","#efb12b","#8e4b2d","#6cae75","#8f7cc1","#4aa3a2"],start=0,parts=[];
+  d.porCategoria.forEach(function(x,i){var pct=total?Number(x.ventas)/total*100:0;parts.push(colors[i%colors.length]+" "+start+"% "+(start+pct)+"%");start+=pct});
+  pieChart.style.background=parts.length?"conic-gradient("+parts.join(",")+")":"#eee";
+  categoryLegend.innerHTML=d.porCategoria.map(function(x,i){return '<span style="display:inline-block;margin:4px"><i style="display:inline-block;width:10px;height:10px;background:'+colors[i%colors.length]+'"></i> '+x.categoria+' $'+Number(x.ventas).toFixed(2)+'</span>'}).join("");
+  topProducts.innerHTML=d.productos.map(function(p){return '<tr><td>'+p.nombre+'</td><td>'+p.unidades+'</td><td>$'+Number(p.ingresos).toFixed(2)+'</td></tr>'}).join("")||'<tr><td colspan="3">Sin ventas</td></tr>';
+ }catch(e){alert(e.message);}
+})();
+</script>
+</body>
+</html>

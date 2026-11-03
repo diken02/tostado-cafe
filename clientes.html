@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clientes · Tostado</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .client-page{padding-bottom:90px}
+    .client-page .page-head{align-items:center}
+    .clients-table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px}
+    .clients-table th{background:var(--leche);color:#a84f22;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--borde)}
+    .clients-table td{border-bottom:1px solid var(--borde);vertical-align:middle;padding:18px 12px}
+    .clients-table tr:last-child td{border-bottom:0}
+    .clients-table td:first-child{color:#322438;font-weight:800}
+    .client-contact{display:flex;flex-direction:column;color:#8a7261;font-size:12px}
+    .client-contact strong{color:#4a5a69;margin-bottom:3px}
+    .points{color:#a84f22;font-weight:800;white-space:nowrap}
+    .client-modal{display:none;position:fixed;inset:0;background:rgba(43,26,18,.35);z-index:50;align-items:center;justify-content:center;padding:20px}
+    .client-modal.open{display:flex}
+    .client-modal .card{width:min(430px,100%)}
+    .client-modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .client-modal-head h3{margin:0}
+    .modal-close{border:0;background:transparent;font-size:22px;color:var(--cafe);cursor:pointer}
+    @media(max-width:768px){
+      .client-page{padding:18px 12px 88px;background:#fffdf9}
+      .client-page .page-head{margin-bottom:20px}
+      .client-page .page-head h1{font-size:30px}
+      .client-page .page-head .btn{display:none}
+      .clients-card{box-shadow:none;border:0;padding:0}
+      .clients-table{display:block}
+      .clients-table thead{display:none}
+      .clients-table tbody{display:block}
+      .clients-table tr{display:grid;grid-template-columns:1fr 1fr;padding:4px 0;border-bottom:1px solid var(--borde)}
+      .clients-table td{display:block;border:0;padding:12px 5px}
+      .clients-table td:nth-child(1){grid-column:1 / 3}
+      .clients-table td:nth-child(3),.clients-table td:nth-child(4){font-size:13px}
+      .clients-table td:nth-child(5){font-size:12px;text-align:right;color:#8a7261}
+      .client-contact{font-size:13px}
+    }
+  </style>
+</head>
+<body data-title="Clientes">
+<main id="app">
+  <section class="client-page">
+    <div class="page-head">
+      <div>
+        <p class="badge" style="margin-bottom:12px">COMUNIDAD</p>
+        <h1>Clientes</h1>
+        <p>Programa de fidelización y relación con clientes.</p>
+      </div>
+      <button class="btn" id="openClientModal">+ Nuevo cliente</button>
+    </div>
+    <div class="filters" style="margin-bottom:12px">
+      <input type="search" id="clientSearch" placeholder="Buscar por nombre, teléfono o correo...">
+    </div>
+
+    <div class="card clients-card" style="padding:0">
+      <div class="table-wrap">
+        <table class="clients-table">
+          <thead>
+            <tr><th>Cliente</th><th>Contacto</th><th>Puntos</th><th>Compras</th><th>Última visita</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="clientsBody">
+            <tr><td>Ana Martínez</td><td class="client-contact"><strong>3005551234</strong><span>ana@email.com</span></td><td class="points">220 pts</td><td>$450.75</td><td>Sin visitas</td></tr>
+            <tr><td>María González</td><td class="client-contact"><strong>3001234567</strong><span>maria@email.com</span></td><td class="points">150 pts</td><td>$250.50</td><td>Sin visitas</td></tr>
+            <tr><td>Carlos Rodríguez</td><td class="client-contact"><strong>3009876543</strong><span>carlos@email.com</span></td><td class="points">85 pts</td><td>$175.00</td><td>Sin visitas</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="client-modal" id="clientModal" role="dialog" aria-modal="true" aria-labelledby="clientModalTitle">
+  <form class="card" id="clientForm">
+    <div class="client-modal-head"><h3 id="clientModalTitle">Nuevo cliente</h3><button class="modal-close" id="closeClientModal" type="button" aria-label="Cerrar">×</button></div>
+    <div class="form-row"><label for="clientName">Nombre completo</label><input id="clientName" required placeholder="Nombre y apellido"></div>
+    <div class="form-row"><label for="clientPhone">Teléfono</label><input id="clientPhone" required placeholder="3000000000"></div>
+    <div class="form-row"><label for="clientEmail">Correo</label><input id="clientEmail" type="email" placeholder="correo@email.com"></div>
+    <button class="btn block" type="submit">Guardar cliente</button>
+  </form>
+</div>
+
+<script src="js/app.js?v=4"></script>
+<script>
+(async function(){
+ if(!window.tostadoToken){location.href="index.html";return;}
+
+ var modal=document.getElementById("clientModal");
+ var form=document.getElementById("clientForm");
+ var tableBody=document.getElementById("clientsBody");
+ var searchInput=document.getElementById("clientSearch");
+ var modalTitle=document.getElementById("clientModalTitle");
+ var editingClientId=null;
+ var clients=[];
+
+ function escapeHtml(value){
+  return String(value == null ? "" : value)
+   .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+   .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+ }
+
+ async function loadClients(search){
+  var query=search ? "?search="+encodeURIComponent(search) : "";
+  var response=await window.tostadoApiFetch("/api/clientes"+query);
+  var data=await response.json();
+  if(!response.ok)throw new Error(data.error || "No fue posible consultar los clientes");
+  clients=data;
+  renderClients();
+ }
+
+ function renderClients(){
+  tableBody.innerHTML=clients.map(function(client){
+   return '<tr><td>'+escapeHtml(client.nombre)+'</td>'+
+   '<td class="client-contact"><strong>'+escapeHtml(client.telefono || "Sin teléfono")+'</strong>'+
+   '<span>'+escapeHtml(client.email || "Sin correo")+'</span></td>'+
+   '<td class="points">'+(client.puntos || 0)+' pts</td>'+
+   '<td>$'+Number(client.total_compras || 0).toFixed(2)+'</td>'+
+   '<td>'+escapeHtml(client.ultima_visita || "Sin visitas")+'</td>'+
+   '<td><button class="btn secondary sm edit-client" data-id="'+client.id+'">Editar</button> '+
+   '<button class="btn secondary sm delete-client" data-id="'+client.id+'">Eliminar</button> '+
+   '<button class="btn secondary sm add-points" data-id="'+client.id+'">+10</button></td></tr>';
+  }).join("") || '<tr><td colspan="6">No hay clientes registrados</td></tr>';
+ }
+
+ document.getElementById("openClientModal").onclick=function(){
+  editingClientId=null;
+  modalTitle.textContent="Nuevo cliente";
+  form.reset();
+  modal.classList.add("open");
+  document.getElementById("clientName").focus();
+ };
+ document.getElementById("closeClientModal").onclick=function(){modal.classList.remove("open");};
+ modal.onclick=function(event){if(event.target===modal)modal.classList.remove("open");};
+
+ form.onsubmit=async function(event){
+  event.preventDefault();
+  var body={
+   nombre:document.getElementById("clientName").value.trim(),
+   telefono:document.getElementById("clientPhone").value.trim(),
+   email:document.getElementById("clientEmail").value.trim()
+  };
+  var url=editingClientId ? "/api/clientes/"+editingClientId : "/api/clientes";
+  var response=await window.tostadoApiFetch(url,{
+   method:editingClientId ? "PATCH":"POST",
+   body:JSON.stringify(body)
+  });
+  var data=await response.json();
+  if(!response.ok){alert(data.error);return;}
+  form.reset();
+  modal.classList.remove("open");
+  await loadClients(searchInput.value.trim());
+ };
+
+ searchInput.oninput=function(){
+  loadClients(searchInput.value.trim()).catch(function(error){alert(error.message)});
+ };
+
+ tableBody.onclick=async function(event){
+  var editButton=event.target.closest(".edit-client");
+  var deleteButton=event.target.closest(".delete-client");
+  var pointsButton=event.target.closest(".add-points");
+  if(editButton){
+   var selectedClient=clients.find(function(client){return String(client.id)==editButton.dataset.id});
+   if(!selectedClient)return;
+   editingClientId=selectedClient.id;
+   modalTitle.textContent="Editar cliente";
+   document.getElementById("clientName").value=selectedClient.nombre || "";
+   document.getElementById("clientPhone").value=selectedClient.telefono || "";
+   document.getElementById("clientEmail").value=selectedClient.email || "";
+   modal.classList.add("open");
+  }
+  if(deleteButton && confirm("¿Eliminar este cliente?")){
+   var deleteResponse=await window.tostadoApiFetch("/api/clientes/"+deleteButton.dataset.id,{method:"DELETE"});
+   var deleteData=await deleteResponse.json();
+   if(!deleteResponse.ok){alert(deleteData.error);return;}
+   await loadClients(searchInput.value.trim());
+  }
+  if(pointsButton){
+   var pointsResponse=await window.tostadoApiFetch("/api/clientes/"+pointsButton.dataset.id+"/puntos",{
+    method:"PATCH",body:JSON.stringify({puntos:10})
+   });
+   var pointsData=await pointsResponse.json();
+   if(!pointsResponse.ok){alert(pointsData.error);return;}
+   await loadClients(searchInput.value.trim());
+  }
+ };
+
+ loadClients().catch(function(error){alert(error.message)});
+})();
+</script>
+</body>
+</html>

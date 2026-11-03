@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Haz tu pedido · Tostado</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .order-page{min-height:100vh;background:#f7f3ed}
+    .menu-intro{max-width:1500px;margin:auto;padding:18px 16px 0}
+    .menu-intro span{color:#b84f20;font-size:11px;font-weight:800;letter-spacing:.12em}
+    .menu-intro h1{font-family:var(--font-title);font-size:24px;margin:6px 0 4px;color:#171717}
+    .menu-intro p{margin:0;color:#c35d26;font-size:13px}
+    .order-header{height:74px;padding:0 16px;background:#fff;border-bottom:1px solid var(--borde);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+    .order-brand{display:flex;align-items:center;gap:10px;color:var(--cafe);text-decoration:none}
+    .order-brand-icon{width:36px;height:36px;border-radius:50%;background:#f0a334;color:#fff;display:grid;place-items:center;font-size:20px}
+    .order-brand strong{font-size:14px;display:block}
+    .order-brand small{display:block;color:var(--suave);font-size:12px}
+    .back-btn,.cart-btn{border:0;background:transparent;color:var(--cafe);font-size:22px;text-decoration:none;cursor:pointer}
+    .cart-btn{position:relative;width:42px;height:42px;font-size:20px}
+    .cart-count{position:absolute;right:0;top:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;background:#d96c28;color:#fff;font-size:11px;display:none;place-items:center}
+    .cart-count.visible{display:grid}
+    .category-bar{padding:15px 16px 14px;background:#fff;border-bottom:1px solid var(--borde);overflow-x:auto;white-space:nowrap}
+    .category-list{display:flex;gap:10px}
+    .category-btn{height:40px;padding:0 16px;border:0;border-radius:99px;background:#fff;color:var(--cafe);box-shadow:inset 0 0 0 1px var(--borde);font-weight:700;cursor:pointer}
+    .category-btn.active{background:#ed9b33;color:#fff;box-shadow:none}
+    .products{max-width:1500px;margin:auto;padding:20px 16px 40px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .order-card{overflow:hidden;background:#fff;border-radius:12px;border:1px solid var(--borde);box-shadow:0 2px 7px rgba(74,44,29,.06)}
+    .order-card-image{width:100%;height:250px;object-fit:cover;background:var(--crema);display:block}
+    .order-card-body{padding:14px 14px 12px}
+    .order-card h3{font-family:var(--font);font-size:14px;margin:0 0 3px;color:#1f2937}
+    .order-card p{height:36px;margin:0;color:#8a8a8a;font-size:13px}
+    .order-card-bottom{margin-top:8px;display:flex;align-items:center;justify-content:space-between}
+    .order-price{color:#d9670b;font-weight:800;font-size:14px}
+    .product-quantity{display:flex;align-items:center;gap:9px}
+    .product-quantity>strong{min-width:16px;text-align:center;font-size:14px}
+    .qty-minus{width:34px;height:34px;border:0;border-radius:50%;background:#fff;color:#d96c28;font-size:20px;cursor:pointer;box-shadow:0 1px 4px rgba(74,44,29,.08)}
+    .add-btn{width:36px;height:36px;border:0;border-radius:50%;background:#ee9a32;color:#fff;font-size:24px;line-height:32px;cursor:pointer;box-shadow:0 2px 5px rgba(180,105,30,.25)}
+    .add-btn:hover{background:#d9801f}
+    .cart-drawer{position:fixed;top:0;right:-520px;width:min(520px,100%);height:100vh;background:#fff;box-shadow:-8px 0 30px rgba(44,25,15,.18);z-index:40;transition:right .25s;padding:18px 16px 20px;overflow-y:auto}
+    .cart-drawer.open{right:0}
+    .drawer-head{height:48px;display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--borde)}
+    .drawer-head h3{font-size:18px;margin:0;color:#1f2340}
+    .close-cart{border:0;background:transparent;font-size:24px;color:var(--cafe);cursor:pointer;padding:0;order:-1}
+    .clear-cart{margin-left:auto;border:0;background:transparent;color:#ff2d67;font-size:12px;cursor:pointer}
+    .order-form{padding-top:14px}
+    .order-label{display:block;margin:0 0 8px;color:#3f3f55;font-size:12px;font-weight:700;text-transform:uppercase}
+    .order-name{width:100%;height:42px;margin-bottom:16px;border:1px solid #f0dcbd;border-radius:10px;background:#fff;color:var(--texto);padding:0 16px}
+    .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .choice-grid.table-grid{grid-template-columns:repeat(4,1fr)}
+    .choice-option{position:relative}
+    .choice-option input{position:absolute;opacity:0}
+    .choice-option label{height:44px;margin:0;border:1px solid var(--borde);border-radius:12px;background:#fff;color:#585f75;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;cursor:pointer}
+    .choice-option input:checked+label{border:2px solid #ed8a31;color:#ec6a1b;background:#fffdf8}
+    .choice-grid.table-grid .choice-option label{height:44px}
+    .cart-items{display:none}
+    .cart-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--borde)}
+    .cart-item strong{font-size:14px}
+    .cart-item span{display:block;color:var(--suave);font-size:13px;margin-top:3px}
+    .qty{display:flex;align-items:center;gap:8px}
+    .qty button{width:28px;height:28px;border-radius:50%;border:1px solid var(--borde);background:#fff;color:var(--cafe);cursor:pointer}
+    .drawer-total{height:58px;display:flex;align-items:center;justify-content:space-between;font-size:16px;margin:0;color:#182044;border-top:1px solid #f1eee8}
+    .drawer-total strong:last-child{color:#ed6a1c;font-size:20px}
+    #checkout{height:58px;border:0;border-radius:12px;background:linear-gradient(90deg,#d57822,#ed6a2a);font-size:15px;font-weight:800}
+    #tableSection.hidden{display:none}
+    .order-ticket-modal{position:fixed;inset:0;background:rgba(46,30,20,.48);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+    .order-ticket-modal.open{display:flex}
+    .order-ticket{width:min(390px,100%);border-radius:18px;background:#fff;padding:24px;text-align:center;box-shadow:0 18px 50px rgba(46,30,20,.25)}
+    .order-ticket-icon{width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:#edf7e8;color:#4c7b37;display:grid;place-items:center;font-size:34px}
+    .order-ticket h2{margin:0;color:#1f2340;font-size:20px}
+    .order-ticket .turn-number{font-family:Georgia,serif;font-size:58px;line-height:1;margin:16px 0 8px;color:#d96c28;font-weight:800}
+    .order-ticket p{margin:6px 0;color:#777;font-size:14px}
+    .order-ticket button{width:100%;margin-top:18px;height:48px;border:0;border-radius:12px;background:#d96c28;color:#fff;font-weight:800;cursor:pointer}
+    @media(max-width:1100px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.order-card-image{height:220px}}
+    @media(max-width:760px){.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px 10px 30px}.order-card-image{height:170px}.order-card-body{padding:10px}.category-bar{padding-left:10px}.order-header{height:68px}}
+    @media(max-width:420px){.products{grid-template-columns:1fr}.order-card-image{height:220px}}
+  </style>
+</head>
+<body>
+<div class="order-page">
+  <header class="order-header">
+    <a href="index.html" class="back-btn" aria-label="Volver">←</a>
+    <a href="pedido.html" class="order-brand">
+      <span class="order-brand-icon">☕</span>
+      <span><strong>Tostado Cafetería</strong><small>Haz tu pedido</small></span>
+    </a>
+    <button class="cart-btn" id="openCart" aria-label="Ver pedido">🛒<span class="cart-count" id="cartCount">0</span></button>
+  </header>
+
+  <nav class="category-bar" aria-label="Categorías">
+    <div class="category-list">
+      <button class="category-btn active" data-category="todos">☕ Bebidas Calientes</button>
+      <button class="category-btn" data-category="frio">🥤 Bebidas Frías</button>
+      <button class="category-btn" data-category="reposteria">🍰 Repostería</button>
+      <button class="category-btn" data-category="sandwich">🥪 Sándwiches</button>
+    </div>
+  </nav>
+
+  <div class="menu-intro">
+    <span>PREPARADO AL MOMENTO</span>
+    <h1>¿Qué deseas tomar?</h1>
+    <p>Elige tus favoritos y agrégalos a tu pedido.</p>
+  </div>
+  <main class="products" id="products"></main>
+</div>
+
+<aside class="cart-drawer" id="cartDrawer" aria-label="Pedido actual">
+  <div class="drawer-head"><button class="close-cart" id="closeCart" aria-label="Cerrar">←</button><h3>Tu pedido</h3><button class="clear-cart" id="clearCart" type="button">Vaciar</button></div>
+  <form class="order-form" id="orderForm">
+    <label class="order-label" for="customerName">Tu nombre (opcional)</label>
+    <input class="order-name" id="customerName" type="text" placeholder="Ej: Ana García">
+
+    <span class="order-label">Tipo de pedido</span>
+    <div class="choice-grid">
+      <div class="choice-option"><input type="radio" name="orderType" id="localOrder" value="En el local" checked><label for="localOrder">◉ &nbsp; En el local</label></div>
+      <div class="choice-option"><input type="radio" name="orderType" id="takeawayOrder" value="Para llevar"><label for="takeawayOrder">▱ &nbsp; Para llevar</label></div>
+    </div>
+
+    <div id="tableSection">
+    <span class="order-label">Mesa</span>
+    <div class="choice-grid table-grid">
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table1" value="1" checked><label for="table1">1</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table2" value="2"><label for="table2">2</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table3" value="3"><label for="table3">3</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table4" value="4"><label for="table4">4</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table5" value="5"><label for="table5">5</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table6" value="6"><label for="table6">6</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table7" value="7"><label for="table7">7</label></div>
+      <div class="choice-option"><input type="radio" name="tableNumber" id="table8" value="8"><label for="table8">8</label></div>
+    </div>
+    </div>
+
+    <span class="order-label">Pago</span>
+    <div class="choice-grid">
+      <div class="choice-option"><input type="radio" name="paymentMethod" id="cashPayment" value="Efectivo"><label for="cashPayment">▣ &nbsp; Efectivo</label></div>
+      <div class="choice-option"><input type="radio" name="paymentMethod" id="cardPayment" value="Tarjeta" checked><label for="cardPayment">▭ &nbsp; Tarjeta</label></div>
+      <div class="choice-option"><input type="radio" name="paymentMethod" id="mobilePayment" value="Billetera Móvil"><label for="mobilePayment">▯ &nbsp; Billetera Móvil</label></div>
+      <div class="choice-option"><input type="radio" name="paymentMethod" id="qrPayment" value="Código QR"><label for="qrPayment">▦ &nbsp; Código QR</label></div>
+    </div>
+  </form>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="drawer-total"><strong>Total</strong><strong id="cartTotal">$ 0.00</strong></div>
+  <button class="btn block" id="checkout">Confirmar pedido</button>
+</aside>
+
+<div class="order-ticket-modal" id="orderTicketModal" role="dialog" aria-modal="true" aria-labelledby="ticketTitle">
+  <div class="order-ticket">
+    <div class="order-ticket-icon">✓</div>
+    <h2 id="ticketTitle">Pedido registrado</h2>
+    <div class="turn-number" id="ticketTurn">--</div>
+    <p>Tu número de turno de espera</p>
+    <p id="ticketOrder">Pedido #</p>
+    <p id="ticketType"></p>
+    <button type="button" id="closeTicket">Entendido</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var products = [];
+  var cart = {};
+  var currentCategory = "todos";
+  var productsEl = document.getElementById("products");
+
+  function money(value){return "$ " + value.toFixed(2);}
+
+  async function loadProducts(){
+    try {
+      productsEl.innerHTML = "<p>Cargando productos desde la base de datos...</p>";
+
+      var response = await fetch("http://localhost:3000/api/productos");
+
+      if(!response.ok){
+        throw new Error("No fue posible obtener el menú");
+      }
+
+      var databaseProducts = await response.json();
+
+      products = databaseProducts.map(function(product){
+        var category = "todos";
+
+        if(product.categoria === "Bebidas Frias"){
+          category = "frio";
+        }else if(product.categoria === "Reposteria"){
+          category = "reposteria";
+        }else if(product.categoria === "Sandwiches"){
+          category = "sandwich";
+        }
+
+        return {
+          id:Number(product.id),
+          name:product.nombre,
+          description:product.descripcion,
+          price:Number(product.precio),
+          category:category,
+          image:product.imagen || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=700&q=80"
+        };
+      });
+
+      renderProducts();
+    }catch(error){
+      console.error(error);
+      productsEl.innerHTML = "<p>No fue posible cargar los productos.</p>";
+    }
+  }
+
+  function renderProducts(){
+    var visible = products.filter(function(p){return currentCategory === "todos" || p.category === currentCategory;});
+    productsEl.innerHTML = visible.map(function(p){
+      var quantity = cart[p.id] ? cart[p.id].quantity : 0;
+      return '<article class="order-card" data-category="' + p.category + '">' +
+        '<img class="order-card-image" src="' + p.image + '" alt="' + p.name + '">' +
+        '<div class="order-card-body"><h3>' + p.name + '</h3><p>' + p.description + '</p>' +
+        '<div class="order-card-bottom"><strong class="order-price">' + money(p.price) + '</strong>' +
+        '<div class="product-quantity"><button class="qty-minus" data-id="' + p.id + '" aria-label="Quitar ' + p.name + '">−</button><strong>' + quantity + '</strong><button class="add-btn" data-id="' + p.id + '" aria-label="Agregar ' + p.name + '">+</button></div></div></div></article>';
+    }).join("");
+  }
+
+  function renderCart(){
+    var items = Object.keys(cart).map(function(id){return cart[id];});
+    var count = items.reduce(function(sum,item){return sum + item.quantity;},0);
+    var total = items.reduce(function(sum,item){return sum + item.price * item.quantity;},0);
+    document.getElementById("cartCount").textContent = count;
+    document.getElementById("cartCount").classList.toggle("visible",count > 0);
+    document.getElementById("cartTotal").textContent = money(total);
+    document.getElementById("cartItems").innerHTML = items.length ? items.map(function(item){
+      return '<div class="cart-item"><div><strong>' + item.name + '</strong><span>' + money(item.price * item.quantity) + '</span></div>' +
+        '<div class="qty"><button data-action="minus" data-id="' + item.id + '" aria-label="Quitar uno">−</button><strong>' + item.quantity + '</strong>' +
+        '<button data-action="plus" data-id="' + item.id + '" aria-label="Agregar uno">+</button></div></div>';
+    }).join("") : '<p style="color:var(--suave);text-align:center;margin-top:50px">Tu pedido está vacío.</p>';
+  }
+
+  productsEl.addEventListener("click",function(event){
+    var button = event.target.closest(".add-btn") || event.target.closest(".qty-minus");
+    if(!button)return;
+    var product = products.find(function(p){return p.id === Number(button.dataset.id);});
+    if(!cart[product.id])cart[product.id] = {id:product.id,name:product.name,price:product.price,quantity:0};
+    cart[product.id].quantity += button.classList.contains("add-btn") ? 1 : -1;
+    if(cart[product.id].quantity <= 0)delete cart[product.id];
+    renderCart();
+    renderProducts();
+  });
+
+  document.querySelector(".category-list").addEventListener("click",function(event){
+    var button = event.target.closest(".category-btn");
+    if(!button)return;
+    document.querySelectorAll(".category-btn").forEach(function(item){item.classList.remove("active");});
+    button.classList.add("active");
+    currentCategory = button.dataset.category;
+    renderProducts();
+  });
+
+  document.getElementById("cartItems").addEventListener("click",function(event){
+    var button = event.target.closest("button[data-action]");
+    if(!button)return;
+    var item = cart[button.dataset.id];
+    item.quantity += button.dataset.action === "plus" ? 1 : -1;
+    if(item.quantity <= 0)delete cart[button.dataset.id];
+    renderCart();
+    renderProducts();
+  });
+
+  document.getElementById("openCart").addEventListener("click",function(){document.getElementById("cartDrawer").classList.add("open");});
+  document.getElementById("closeCart").addEventListener("click",function(){document.getElementById("cartDrawer").classList.remove("open");});
+  document.getElementById("clearCart").addEventListener("click",function(){
+    cart = {};
+    renderCart();
+    renderProducts();
+  });
+
+  function updateOrderType(){
+    var selected = document.querySelector('input[name="orderType"]:checked');
+    var isLocal = !selected || selected.value === "En el local";
+    document.getElementById("tableSection").classList.toggle("hidden", !isLocal);
+  }
+
+  document.querySelectorAll('input[name="orderType"]').forEach(function(input){
+    input.addEventListener("change",updateOrderType);
+  });
+
+  document.getElementById("closeTicket").addEventListener("click",function(){
+    document.getElementById("orderTicketModal").classList.remove("open");
+  });
+
+  document.getElementById("checkout").addEventListener("click",async function(){
+    if(Object.keys(cart).length === 0){
+      alert("Agrega al menos un producto a tu pedido.");
+      return;
+    }
+
+    var orderTypeInput = document.querySelector('input[name="orderType"]:checked');
+    var tableInput = document.querySelector('input[name="tableNumber"]:checked');
+    var typeMap = {
+      "En el local":"local",
+      "Para llevar":"llevar",
+      "Delivery":"delivery"
+    };
+    try {
+      var orderResponse = await fetch("http://localhost:3000/api/pedidos",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          tipo:typeMap[orderTypeInput ? orderTypeInput.value : "En el local"] || "local",
+          nombreCliente:document.getElementById("customerName").value.trim(),
+          mesaId:typeMap[orderTypeInput ? orderTypeInput.value : "En el local"] === "local" && tableInput ? Number(tableInput.value) : null,
+          productos:Object.keys(cart).map(function(id){
+            return {productoId:Number(id),cantidad:cart[id].quantity};
+          })
+        })
+      });
+
+      var orderResult = await orderResponse.json();
+      if(!orderResponse.ok){
+        throw new Error(orderResult.error || "No se pudo crear el pedido");
+      }
+
+      var turnText = String(orderResult.numeroEspera || orderResult.ordenId).padStart(2,"0");
+      var typeText = orderResult.tipo === "llevar"
+        ? "Tipo: Para llevar"
+        : orderResult.tipo === "delivery"
+          ? "Tipo: Delivery"
+          : "Tipo: En el local";
+      document.getElementById("ticketTurn").textContent = turnText;
+      document.getElementById("ticketOrder").textContent = "Pedido #" + orderResult.ordenId;
+      document.getElementById("ticketType").textContent = typeText;
+      document.getElementById("orderTicketModal").classList.add("open");
+      cart = {};
+      renderCart();
+      renderProducts();
+      document.getElementById("cartDrawer").classList.remove("open");
+    }catch(error){
+      console.error(error);
+      alert(error.message);
+    }
+  });
+
+  updateOrderType();
+  renderCart();
+  loadProducts();
+})();
+</script>
+</body>
+</html>

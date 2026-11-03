@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesas · Tostado</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-title="Mesas">
+<main id="app">
+<div class="page-head"><div><h1>Mesas</h1><p>Estado del salón (demo)</p></div><div><span class="badge ok">Libre</span> <span class="badge danger">Ocupada</span> <span class="badge warn">Reservada</span></div></div>
+<div class="grid cols-4">
+<div class="card mesa libre"><div class="num">1</div><strong>Mesa 1</strong><p>2 personas · Disponible</p><select><option>Disponible</option><option>Ocupada</option><option>Reservada</option></select></div>
+<div class="card mesa libre"><div class="num">2</div><strong>Mesa 2</strong><p>2 personas · Disponible</p><select><option>Disponible</option><option>Ocupada</option><option>Reservada</option></select></div>
+<div class="card mesa libre"><div class="num">3</div><strong>Mesa 3</strong><p>4 personas · Disponible</p><select><option>Disponible</option><option>Ocupada</option><option>Reservada</option></select></div>
+<div class="card mesa libre"><div class="num">4</div><strong>Mesa 4</strong><p>4 personas · Disponible</p><select><option>Disponible</option><option>Ocupada</option><option>Reservada</option></select></div>
+</div>
+</main>
+<script src="js/app.js?v=4"></script>
+<script>
+(async function(){
+ if(!window.tostadoToken){location.href="index.html";return;}
+ document.querySelector("main").innerHTML='<div class="page-head"><div><h1>Mesas</h1><p>Agrega y administra el salón</p></div><button class="btn" id="addTable">+ Nueva mesa</button></div>'+
+ '<div class="grid cols-4" id="tablesGrid"></div><dialog id="tableDialog" style="border:0;border-radius:12px;padding:20px"><form id="tableForm"><h3>Nueva mesa</h3><div class="form-row"><label>Número</label><input id="tableNumber" type="number" min="1" required></div><div class="form-row"><label>Capacidad</label><input id="tableCapacity" type="number" min="1" required value="2"></div><div class="form-row"><label>Estado</label><select id="tableState"><option>disponible</option><option>ocupada</option><option>reservada</option></select></div><button class="btn">Guardar</button> <button type="button" class="btn secondary" onclick="tableDialog.close()">Cerrar</button></form></dialog>';
+ async function load(){var r=await tostadoApiFetch("/api/mesas");var d=await r.json();if(!r.ok)throw new Error(d.error);tablesGrid.innerHTML=d.map(function(m){
+  return '<div class="card mesa"><div class="num">'+m.numero+'</div><strong>Mesa '+m.numero+'</strong><p><input type="number" min="1" value="'+m.capacidad+'" class="table-capacity-'+m.id+'" style="width:70px"> personas</p>'+
+  '<select class="table-state-'+m.id+'"><option'+(m.estado==="disponible"?" selected":"")+'>disponible</option><option'+(m.estado==="ocupada"?" selected":"")+'>ocupada</option><option'+(m.estado==="reservada"?" selected":"")+'>reservada</option></select>'+
+  '<button class="btn secondary sm save-table" data-id="'+m.id+'" style="margin-top:8px">Guardar</button> <button class="btn secondary sm delete-table" data-id="'+m.id+'">Eliminar</button></div>';
+ }).join("");}
+ addTable.onclick=function(){tableForm.reset();tableCapacity.value=2;tableDialog.showModal()};
+ tableForm.onsubmit=async function(e){e.preventDefault();var body={numero:Number(tableNumber.value),capacidad:Number(tableCapacity.value),estado:tableState.value};var r=await tostadoApiFetch("/api/mesas",{method:"POST",body:JSON.stringify(body)});var d=await r.json();if(!r.ok)return alert(d.error);tableDialog.close();load();}
+ tablesGrid.onclick=async function(e){
+  var save=e.target.closest(".save-table"),remove=e.target.closest(".delete-table");
+  if(save){var id=save.dataset.id,r=await tostadoApiFetch("/api/mesas/"+id,{method:"PATCH",body:JSON.stringify({numero:null,capacidad:Number(document.querySelector(".table-capacity-"+id).value),estado:document.querySelector(".table-state-"+id).value})});var d=await r.json();if(!r.ok)return alert(d.error);load();}
+  if(remove&&confirm("¿Eliminar esta mesa?")){var r2=await tostadoApiFetch("/api/mesas/"+remove.dataset.id,{method:"DELETE"}),d2=await r2.json();if(!r2.ok)return alert(d2.error);load();}
+ };
+ load().catch(function(e){alert(e.message)});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bienvenido · Tostado Cafetería</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  body.home-page{min-height:100vh;background:linear-gradient(180deg,#fffaf1 0%,#fffdf8 55%,#fff9eb 100%)}
+  .home-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:140px 20px 38px}
+  .home-logo{width:116px;height:116px;border-radius:50px;background:linear-gradient(145deg,#bd7023,#f4a235);display:grid;place-items:center;box-shadow:0 10px 28px rgba(168,100,31,.20);font-size:52px;margin-bottom:18px}
+  .home-title{text-align:center;margin-bottom:38px}
+  .home-title h1{font-family:Georgia,"Times New Roman",serif;font-size:48px;line-height:1;margin:0;color:#7f371e}
+  .home-title .subtitle{margin-top:12px;font-size:16px;letter-spacing:.30em;color:#d58027}
+  .home-title .question{margin-top:18px;color:#c47a31;font-size:15px}
+  .home-actions{width:min(390px,100%);text-align:center}
+  .menu-button{height:68px;width:100%;border-radius:22px;border:0;background:linear-gradient(90deg,#d9781f,#ef5d29);color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;font-size:17px;font-weight:800;text-decoration:none;box-shadow:0 14px 26px rgba(218,112,38,.20)}
+  .menu-button span{font-size:25px}
+  .menu-caption{margin:14px 0 0;color:#efb12b;font-size:13px}
+  .home-divider{width:min(390px,100%);height:1px;background:#eadcbd;margin:38px 0 30px;position:relative}
+  .home-divider::after{content:"";position:absolute;left:50%;top:-5px;width:9px;height:9px;border-radius:50%;background:#fff;transform:translateX(-50%) rotate(45deg);border:1px solid #e9b844;box-sizing:border-box}
+  .staff-area{width:min(390px,100%);position:relative}
+  .staff-button{width:100%;height:48px;border-radius:14px;border:1px solid #ebcfa7;background:rgba(255,255,255,.75);color:#bf7330;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+  .staff-button:hover{background:#fff}
+  .staff-menu{display:none;position:absolute;top:58px;left:0;width:100%;background:#fff;border:1px solid var(--borde);border-radius:14px;box-shadow:var(--shadow);padding:7px;z-index:10}
+  .staff-area.open .staff-menu{display:block}
+  .staff-menu a{display:block;padding:11px 12px;border-radius:8px;color:var(--cafe);text-decoration:none;font-size:14px;font-weight:600}
+  .staff-menu a:hover{background:var(--crema)}
+  .staff-area.open-login .staff-button{visibility:hidden}
+  .staff-panel{display:none;width:min(390px,100%);position:absolute;top:0;left:0;padding:24px 20px 18px;border-radius:16px;background:#fff;box-shadow:0 14px 35px rgba(74,44,29,.16);z-index:12}
+  .staff-area.open-login .staff-panel{display:block}
+  .staff-panel-head{height:38px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:14px;color:var(--cafe);font-weight:800;font-size:15px}
+  .staff-panel-head span{position:absolute;left:18px;color:#d97727;font-size:20px}
+  .staff-panel-close{position:absolute;right:4px;top:-2px;border:0;background:transparent;color:#e79b32;font-size:24px;cursor:pointer}
+  .staff-login-field{height:50px;margin-bottom:12px;border-radius:12px;border:2px solid #f0a333;background:#fff;padding:0 14px;display:flex;align-items:center;gap:10px;color:#efa72d}
+  .staff-login-field input{border:0;background:transparent;padding:0;height:100%;outline:none;color:var(--cafe);font-size:14px}
+  .staff-login-field input::placeholder{color:#efb233}
+  .staff-login-field:focus-within{border-color:#d97727}
+  .staff-login-submit{height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#93461e,#7f391e);color:#fff;font-size:14px;font-weight:800;cursor:pointer}
+  .staff-login-submit:hover{filter:brightness(.95)}
+  .staff-demo{margin:12px 0 0;text-align:center;color:#efa72d;font-size:12px}
+  .home-footer{margin-top:auto;padding-top:55px;color:#e2a95f;font-size:12px;text-align:center}
+  @media(max-width:600px){.home-page{padding-top:70px}.home-logo{width:92px;height:92px;border-radius:38px;font-size:42px}.home-title h1{font-size:40px}.home-title{margin-bottom:30px}.home-divider{margin-top:28px}}
+</style>
+</head>
+<body class="home-page">
+  <main style="width:100%;display:flex;flex-direction:column;align-items:center">
+    <div class="home-logo" aria-hidden="true">☕</div>
+    <div class="home-title">
+      <h1>Tostado</h1>
+      <div class="subtitle">CAFETERÍA</div>
+      <div class="question">¿Qué deseas tomar?</div>
+    </div>
+    <div class="home-actions">
+      <a class="menu-button" href="pedido.html"><span>▣</span> Ver Menú y Ordenar</a>
+      <p class="menu-caption">Explora nuestro menú y realiza tu pedido.</p>
+    </div>
+    <div class="home-divider"></div>
+    <div class="staff-area" id="staffArea">
+      <button class="staff-button" id="staffButton" type="button"><span>♙</span> Acceso del personal <span>⌄</span></button>
+      <form class="staff-panel" id="staffPanel">
+        <div class="staff-panel-head"><span>♙</span>Acceso del personal<button class="staff-panel-close" id="staffPanelClose" type="button" aria-label="Cerrar">×</button></div>
+        <label class="staff-login-field"><span>♙</span><input id="staffUser" type="text" placeholder="Usuario" autocomplete="username"></label>
+        <label class="staff-login-field"><span>▣</span><input id="staffPassword" type="password" placeholder="Contraseña" autocomplete="current-password"><span id="showPassword" style="cursor:pointer">◉</span></label>
+        <button class="staff-login-submit btn block" type="submit">Ingresar al sistema</button>
+        <p class="staff-demo">Demo: <strong>admin / admin123</strong></p>
+      </form>
+    </div>
+  </main>
+  <footer class="home-footer">© 2026 Tostado Cafetería - Todos los derechos reservados</footer>
+  <script>
+    document.getElementById("staffButton").addEventListener("click",function(){
+      document.getElementById("staffArea").classList.toggle("open-login");
+    });
+    document.getElementById("staffPanelClose").addEventListener("click",function(){
+      document.getElementById("staffArea").classList.remove("open-login");
+    });
+    document.getElementById("showPassword").addEventListener("click",function(){
+      var password = document.getElementById("staffPassword");
+      password.type = password.type === "password" ? "text" : "password";
+    });
+    document.getElementById("staffPanel").addEventListener("submit",function(event){
+      event.preventDefault();
+      var user = document.getElementById("staffUser").value.trim();
+      var password = document.getElementById("staffPassword").value;
+      fetch("http://localhost:3000/api/auth/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({usuario:user,password:password})
+      }).then(function(response){
+        return response.json().then(function(result){
+          if(!response.ok)throw new Error(result.error || "No fue posible iniciar sesión");
+          return result;
+        });
+      }).then(function(result){
+        sessionStorage.setItem("tostadoToken",result.token);
+        sessionStorage.setItem("tostadoUser",JSON.stringify(result.usuario));
+        window.location.href = "admin.html";
+      }).catch(function(error){
+        alert(error.message);
+      });
+    });
+  </script>
+</body>
+</html>
