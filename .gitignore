@@ -1,8 +1,7 @@
 .env
-target/
-server/.env
-server/node_modules/
+.env.*
 *.log
 *.iml
 .idea/
 .vscode/
+target/
