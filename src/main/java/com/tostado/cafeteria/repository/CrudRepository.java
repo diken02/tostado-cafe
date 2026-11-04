@@ -28,6 +28,23 @@ public class CrudRepository {
         }
     }
 
+    public Map<String,Object> find(String resource, long id) throws SQLException {
+        String table = TABLES.get(resource);
+        if (table == null) throw new SQLException("Unknown resource: " + resource);
+        String sql = "SELECT * FROM " + table + " WHERE id=? LIMIT 1";
+        try (Connection c = DatabaseConfig.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1,id);
+            try (ResultSet rs=ps.executeQuery()) {
+                if(!rs.next()) return null;
+                Map<String,Object> row=new LinkedHashMap<>();
+                ResultSetMetaData md=rs.getMetaData();
+                for(int i=1;i<=md.getColumnCount();i++) row.put(md.getColumnName(i),rs.getObject(i));
+                return row;
+            }
+        }
+    }
+
     public void save(String resource, Map<String,String> values, Long id) throws SQLException {
         String table = TABLES.get(resource);
         if (table == null) throw new SQLException("Unknown resource");
@@ -83,10 +100,15 @@ public class CrudRepository {
         Map<String,Object> result = new LinkedHashMap<>();
         try (Connection c = DatabaseConfig.getConnection()) {
             result.put("ventasHoy", scalar(c, "SELECT COALESCE(SUM(total),0) FROM cafeteria_orden WHERE fecha>=CURDATE() AND estado IN ('entregado','listo')"));
+            result.put("pedidosHoy", scalar(c, "SELECT COUNT(*) FROM cafeteria_orden WHERE fecha>=CURDATE()"));
+            result.put("ventasAyer", scalar(c, "SELECT COALESCE(SUM(total),0) FROM cafeteria_orden WHERE fecha>=DATE_SUB(CURDATE(),INTERVAL 1 DAY) AND fecha<CURDATE() AND estado IN ('entregado','listo')"));
+            result.put("ticketPromedio", scalar(c, "SELECT COALESCE(AVG(total),0) FROM cafeteria_orden WHERE fecha>=CURDATE() AND estado IN ('entregado','listo')"));
             result.put("productos", scalar(c, "SELECT COUNT(*) FROM cafeteria_producto WHERE disponible=1"));
             result.put("clientes", scalar(c, "SELECT COUNT(*) FROM cafeteria_cliente"));
             result.put("mesasOcupadas", scalar(c, "SELECT COUNT(*) FROM cafeteria_mesa WHERE estado='ocupada'"));
             result.put("alertasInventario", scalar(c, "SELECT COUNT(*) FROM cafeteria_insumo WHERE activo=1 AND cantidad<=nivel_minimo"));
+            result.put("enProduccion", scalar(c, "SELECT COUNT(*) FROM cafeteria_orden WHERE estado IN ('pendiente','preparando')"));
+            result.put("entregados", scalar(c, "SELECT COUNT(*) FROM cafeteria_orden WHERE fecha>=CURDATE() AND estado='entregado'"));
         }
         return result;
     }

@@ -1,14 +1,14 @@
 package com.tostado.cafeteria.controller;
 
+import com.tostado.cafeteria.config.Passwords;
 import com.tostado.cafeteria.repository.CrudRepository;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@WebServlet(urlPatterns={"/dashboard","/crud/*","/mesas","/pedidos","/pos","/reportes","/admin/*"})
+@WebServlet(urlPatterns={"/dashboard","/crud/*","/mesas","/pedidos","/pos","/reportes","/admin/*","/cuentas"})
 public class AppServlet extends HttpServlet {
     private final CrudRepository repository=new CrudRepository();
     @Override protected void doGet(HttpServletRequest req,HttpServletResponse res)throws IOException, jakarta.servlet.ServletException {
@@ -20,10 +20,13 @@ public class AppServlet extends HttpServlet {
             } else if("/reportes".equals(path)) {
                 req.setAttribute("dashboard",repository.dashboard());
                 req.getRequestDispatcher("/WEB-INF/views/reportes.jsp").forward(req,res);
-            } else if("/crud".equals(path) || path.startsWith("/crud/") || "/mesas".equals(path) || "/pedidos".equals(path) || "/pos".equals(path) || path.startsWith("/admin/")) {
+            } else if("/crud".equals(path) || path.startsWith("/crud/") || "/mesas".equals(path) || "/pedidos".equals(path) || "/pos".equals(path) || "/cuentas".equals(path) || path.startsWith("/admin/")) {
                 String resource=resourceFor(req);
                 req.setAttribute("resource",resource);
                 req.setAttribute("rows",repository.list(resource));
+                if("/cuentas".equals(path)&&req.getParameter("edit")!=null) {
+                    req.setAttribute("editRow",repository.find("empleados",Long.parseLong(req.getParameter("edit"))));
+                }
                 String view="/pos".equals(path)||"/pedidos".equals(path)?"/WEB-INF/views/pedidos.jsp":
                         "/mesas".equals(path)?"/WEB-INF/views/mesas.jsp":"/WEB-INF/views/crud.jsp";
                 req.getRequestDispatcher(view).forward(req,res);
@@ -35,10 +38,14 @@ public class AppServlet extends HttpServlet {
         if(req.getParameter("_method")!=null) { doDelete(req,res); return; }
         Map<String,String> values=new LinkedHashMap<>();
         req.getParameterMap().forEach((k,v)->{ if(!k.startsWith("_")&&v.length>0) values.put(k,v[0]); });
+        if("empleados".equals(resource)&&values.containsKey("contrasena_hash")) {
+            values.put("contrasena_hash", Passwords.hash(values.get("contrasena_hash")));
+        }
         try {
             Long id=req.getParameter("id")==null||req.getParameter("id").isBlank()?null:Long.valueOf(req.getParameter("id"));
             repository.save(resource,values,id);
-            res.sendRedirect(req.getContextPath()+"/crud/"+resource+"?success=Datos guardados");
+            String destination="/cuentas".equals(req.getServletPath()) ? "/cuentas" : "/crud/"+resource;
+            res.sendRedirect(req.getContextPath()+destination+"?success=Datos guardados");
         } catch(Exception e) { throw new IOException("Save failed",e); }
     }
     @Override protected void doDelete(HttpServletRequest req,HttpServletResponse res)throws IOException,jakarta.servlet.ServletException {
@@ -46,13 +53,15 @@ public class AppServlet extends HttpServlet {
             String resource=resourceFor(req);
             long id=Long.parseLong(req.getParameter("id"));
             repository.delete(resource,id);
-            res.sendRedirect(req.getContextPath()+"/crud/"+resource+"?success=Registro eliminado");
+            String destination="/cuentas".equals(req.getServletPath()) ? "/cuentas" : "/crud/"+resource;
+            res.sendRedirect(req.getContextPath()+destination+"?success=Registro eliminado");
         } catch(Exception e) { throw new IOException("Delete failed",e); }
     }
     private String resourceFor(HttpServletRequest req) {
         String path=req.getPathInfo();
         if(path!=null&&path.length()>1) return path.substring(1);
         if(req.getServletPath().startsWith("/admin/")) return req.getServletPath().substring("/admin/".length());
+        if("/cuentas".equals(req.getServletPath())) return "empleados";
         if("/mesas".equals(req.getServletPath())) return "mesas";
         if("/pedidos".equals(req.getServletPath())||"/pos".equals(req.getServletPath())) return "pedidos";
         return "productos";

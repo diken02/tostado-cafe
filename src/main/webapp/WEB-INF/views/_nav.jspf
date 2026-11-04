@@ -1,14 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <nav class="topnav">
-  <strong>Tostado</strong>
-  <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-  <a href="${pageContext.request.contextPath}/crud/clientes">Clientes</a>
-  <a href="${pageContext.request.contextPath}/crud/productos">Productos</a>
-  <a href="${pageContext.request.contextPath}/crud/insumos">Inventario</a>
-  <a href="${pageContext.request.contextPath}/crud/empleados">Empleados</a>
-  <a href="${pageContext.request.contextPath}/mesas">Mesas</a>
-  <a href="${pageContext.request.contextPath}/pos">POS</a>
-  <a href="${pageContext.request.contextPath}/reportes">Reportes</a>
-  <span class="role">${role}</span>
-  <a href="${pageContext.request.contextPath}/logout">Salir</a>
+  <a class="brand" href="${pageContext.request.contextPath}/dashboard">
+    <span class="brand-mark">☕</span>
+    <span class="brand-text"><strong>Tostado</strong><small>${role == 'administrador' ? 'Administrador Principal' : role}</small></span>
+  </a>
+  <div class="nav-links">
+    <a href="${pageContext.request.contextPath}/dashboard"><span class="nav-icon">▦</span> Administración</a>
+    <a href="${pageContext.request.contextPath}/pos"><span class="nav-icon">▣</span> Punto de Venta</a>
+    <a href="${pageContext.request.contextPath}/mesas"><span class="nav-icon">♧</span> Mesas</a>
+    <a href="${pageContext.request.contextPath}/crud/productos">Productos</a>
+    <a href="${pageContext.request.contextPath}/crud/insumos">Inventario</a>
+    <a href="${pageContext.request.contextPath}/crud/clientes"><span class="nav-icon">♙</span> Clientes</a>
+    <a href="${pageContext.request.contextPath}/reportes"><span class="nav-icon">▥</span> Informes</a>
+    <a href="${pageContext.request.contextPath}/cuentas" class="${resource == 'empleados' ? 'active' : ''}"><span class="nav-icon">⚙</span> Cuentas</a>
+  </div>
+  <a class="logout" href="${pageContext.request.contextPath}/logout">Salir</a>
 </nav>

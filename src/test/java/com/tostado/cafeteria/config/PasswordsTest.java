@@ -14,4 +14,8 @@ class PasswordsTest {
         assertFalse(Passwords.verify("admin123",null));
         assertFalse(Passwords.verify("admin123",""));
     }
+    @Test void rejectsMalformedHash() {
+        assertFalse(Passwords.verify("admin123","Invalid salt revision"));
+        assertFalse(Passwords.verify("admin123","admin123"));
+    }
 }

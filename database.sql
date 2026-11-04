@@ -262,18 +262,21 @@ ON DUPLICATE KEY UPDATE
   total_compras = VALUES(total_compras);
 
 INSERT INTO cafeteria_empleado
-  (id, nombre, rol, usuario, turno, activo)
+  (id, nombre, rol, usuario, contrasena_hash, turno, activo)
 VALUES
-  (1, 'Ana Torres', 'administrador', 'ana.torres', 'manana', 1),
-  (2, 'Luis Mendoza', 'barista', 'luis.mendoza', 'manana', 1),
-  (3, 'Carla Rios', 'mesero', 'carla.rios', 'tarde', 1),
-  (4, 'Jorge Salas', 'cajero', 'jorge.salas', 'tarde', 1),
-  (5, 'Marta Lugo', 'barista', 'marta.lugo', 'noche', 0),
-  (6, 'Administrador Demo', 'administrador', 'admin', 'manana', 1)
+  (1, 'Ana Torres', 'administrador', 'ana.torres', NULL, 'manana', 1),
+  (2, 'Luis Mendoza', 'barista', 'luis.mendoza', NULL, 'manana', 1),
+  (3, 'Carla Rios', 'mesero', 'carla.rios', NULL, 'tarde', 1),
+  (4, 'Jorge Salas', 'cajero', 'jorge.salas', NULL, 'tarde', 1),
+  (5, 'Marta Lugo', 'barista', 'marta.lugo', NULL, 'noche', 0),
+  (6, 'Administrador Demo', 'administrador', 'admin',
+   '$2a$12$kuJOPOiCxQDDz4BnznxZre6awLI.YZ6NjG76L9f/MoXPf3KOn.fEO',
+   'manana', 1)
 ON DUPLICATE KEY UPDATE
   nombre = VALUES(nombre),
   rol = VALUES(rol),
   usuario = VALUES(usuario),
+  contrasena_hash = VALUES(contrasena_hash),
   turno = VALUES(turno),
   activo = VALUES(activo);
 

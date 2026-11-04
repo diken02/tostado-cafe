@@ -1,129 +1,182 @@
-# Tostado Cafeteria
+# Tostado Cafeteria - Version Java
 
-Sistema web para la gestion de una cafeteria. Permite administrar clientes, empleados, mesas, productos, inventario, pedidos, pagos y reportes mediante un frontend HTML/CSS/JavaScript y una API REST desarrollada con Node.js, Express y MySQL.
+Aplicacion web desarrollada con Java 17, Jakarta Servlet 6, JSP, JSTL, Maven, MySQL y Apache Tomcat 10.
 
-## Tabla de contenido
+La aplicacion conserva el estilo visual de la interfaz original y agrega mejoras en la conexion a MySQL, la navegacion administrativa, el Dashboard, el carrito de pedidos y la gestion de cuentas.
 
-- [Requisitos](#requisitos)
-- [Tecnologias](#tecnologias)
-- [Estructura del proyecto](#estructura-del-proyecto)
-- [Configuracion inicial](#configuracion-inicial)
-- [Ejecucion de la aplicacion](#ejecucion-de-la-aplicacion)
-- [Acceso al sistema](#acceso-al-sistema)
-- [Funcionalidades CRUD](#funcionalidades-crud)
-- [API principal](#api-principal)
-- [Estandares de codificacion](#estandares-de-codificacion)
-- [Pruebas](#pruebas)
-- [Copias de seguridad](#copias-de-seguridad)
-- [Solucion de problemas](#solucion-de-problemas)
+## Tecnologias utilizadas
+
+- Java 17
+- Maven
+- Jakarta Servlet 6
+- JSP y JSTL
+- MySQL 8
+- MySQL Connector/J 8.4
+- Apache Tomcat 10.1.31
+- JBCrypt para contrasenas
+- JUnit 5
 
 ## Requisitos
 
-- Windows 10 o Windows 11.
-- Node.js 18 o superior.
+- JDK 17.
+- Maven 3.8 o superior.
 - MySQL Server 8.
-- MySQL Workbench o acceso por terminal a MySQL.
-- Navegador web moderno.
+- Apache Tomcat 10.
+- Un navegador web moderno.
 
-Verificar Node.js:
+## Activar los programas necesarios
+
+### 1. Activar Java y Maven
+
+Compruebe que Java 17 y Maven estan disponibles antes de compilar:
 
 ```powershell
-node --version
-npm.cmd --version
+java -version
+javac -version
+mvn -version
 ```
 
-## Tecnologias
-
-### Frontend
-
-- HTML5.
-- CSS3.
-- JavaScript moderno.
-- `sessionStorage` para el token de autenticacion.
-
-### Backend
-
-- Node.js.
-- Express 5.
-- MySQL2.
-- bcryptjs.
-- JSON Web Token.
-- dotenv.
-- CORS.
-
-### Base de datos
-
-- MySQL 8.
-- Motor InnoDB.
-- Relaciones con claves foraneas.
-- Restricciones de integridad y valores predeterminados.
-
-## Estructura del proyecto
+El proyecto requiere Java 17. Si `java` o `mvn` no se reconocen, configure las variables de entorno de Windows:
 
 ```text
-tostado_cafeteria_/
-├── database.sql              Base de datos, tablas y datos iniciales
-├── index.html                Inicio y acceso del personal
-├── pedido.html               Catalogo y registro de pedidos
-├── admin.html                Dashboard ejecutivo
-├── inventario.html           Administracion del inventario
-├── menu.html                 Administracion del menu
-├── mesas.html                Administracion de mesas
-├── pos.html                  Punto de venta
-├── reportes.html             Reportes
-├── empleados.html            Administracion de empleados
-├── clientes.html             Administracion de clientes
-├── css/
-│   └── styles.css            Estilos compartidos
-├── js/
-│   └── app.js                Navegacion y configuracion compartida
-├── README.md                 Documentacion del proyecto
-└── server/
-    ├── server.js             Configuracion Express y rutas REST
-    ├── db.js                 Conexion con MySQL
-    ├── backup.js             Creacion de respaldos
-    ├── package.json          Dependencias y comandos
-    ├── package-lock.json     Versiones bloqueadas de dependencias
-    ├── .env                  Variables privadas locales
-    ├── node_modules/         Dependencias instaladas
-    ├── backups/              Respaldos generados
-    └── test/
-        └── api.test.js       Pruebas de autenticacion y rutas
+JAVA_HOME=C:\Program Files\Java\jdk-17
+MAVEN_HOME=C:\Tools\apache-maven-3.9.11
 ```
 
-## Configuracion inicial
+Agregue a `Path`:
 
-### 1. Instalar dependencias
-
-Desde la carpeta principal:
-
-```powershell
-
-coloca la ubicación de la carpeta
-ejemplo
-cd C:\tostado_cafeteria_\server
-npm.cmd install
+```text
+%JAVA_HOME%\bin
+%MAVEN_HOME%\bin
 ```
 
-### 2. Crear la base de datos
+Cierre y vuelva a abrir la terminal despues de modificar las variables.
 
-Desde MySQL Workbench:
+### 2. Activar MySQL
 
-1. Conectarse al servidor MySQL local.
-2. Abrir el archivo `database.sql`.
-3. Ejecutar todo el script.
-
-El script crea la base de datos `tostado_cafe`, las tablas, las relaciones, las restricciones y los datos de ejemplo.
-
-O usar una terminal, reemplazando la ruta si MySQL esta instalado en otra ubicacion:
+Inicie el servicio desde una terminal de PowerShell ejecutada como administrador:
 
 ```powershell
-cd C:\Users\DELL\Desktop\tostado_cafeteria_
+net start MySQL80
+```
+
+El nombre del servicio puede cambiar segun la instalacion. Puede consultar los servicios disponibles con:
+
+```powershell
+Get-Service *mysql*
+```
+
+Si el servicio aparece detenido, activelo:
+
+```powershell
+Start-Service NombreDelServicioMySQL
+```
+
+### 3. Activar la politica de PowerShell
+
+Si Windows impide ejecutar scripts o comandos de Maven, npm o archivos `.ps1`, active temporalmente la ejecucion para la sesion actual:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+Esta opcion termina al cerrar la terminal y no modifica permanentemente las politicas del equipo.
+
+Para comprobar la politica activa:
+
+```powershell
+Get-ExecutionPolicy -List
+```
+
+### 4. Activar Tomcat
+
+Configure primero las variables de conexion MySQL si son necesarias. Luego puede iniciar Tomcat desde su carpeta:
+
+```powershell
+cd C:\Tools\apache-tomcat-10.1.31\bin
+.\startup.bat
+```
+
+Para detener Tomcat:
+
+```powershell
+cd C:\Tools\apache-tomcat-10.1.31\bin
+.\shutdown.bat
+```
+
+Si el puerto `8080` esta ocupado, cierre el proceso anterior o configure otro puerto en:
+
+```text
+C:\Tools\apache-tomcat-10.1.31\conf\server.xml
+```
+
+### 5. Activar el proyecto desde VS Code
+
+Desde la raiz del proyecto:
+
+1. Instale las extensiones **Extension Pack for Java** y **Community Server Connectors** o **Debugger for Java** con soporte de Tomcat.
+2. Abra la carpeta del proyecto.
+3. Compile con:
+
+```powershell
+mvn clean package
+```
+
+4. Espere a que VS Code importe el proyecto Maven.
+5. Agregue el WAR `target/tostado-cafeteria.war` o el proyecto Maven al servidor Tomcat configurado en la extension.
+6. Inicie el servidor desde el panel de servidores o con el comando `Java: Run`.
+7. Abra la aplicacion:
+
+```text
+http://localhost:8080/tostado-cafeteria/
+```
+
+La configuracion [web.xml](src/main/webapp/WEB-INF/web.xml) establece el servlet de bienvenida como `login`. Por eso la pagina inicial muestra el acceso a la cafeteria y al personal.
+
+## Base de datos
+
+La configuracion predeterminada utiliza:
+
+- Host: `localhost`
+- Puerto: `3306`
+- Base de datos: `tostado_cafe`
+- Usuario: `root`
+- Contrasena: vacia
+
+El proyecto lee estas variables de entorno antes de usar los valores predeterminados:
+
+```text
+DB_HOST
+DB_PORT
+DB_NAME
+DB_USER
+DB_PASSWORD
+```
+
+La cadena JDBC se construye en:
+
+[DatabaseConfig.java](src/main/java/com/tostado/cafeteria/config/DatabaseConfig.java)
+
+Contiene el controlador `com.mysql.cj.jdbc.Driver`, la codificacion UTF-8 y `allowPublicKeyRetrieval=true` para permitir la conexion con MySQL cuando la autenticacion lo requiere.
+
+### Crear la base de datos
+
+1. Iniciar el servicio MySQL.
+2. Abrir MySQL Workbench o una terminal.
+3. Ejecutar el archivo:
+
+```text
+database.sql
+```
+
+Tambien se puede importar desde PowerShell:
+
+```powershell
 Get-Content .\database.sql -Raw |
   & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
 ```
 
-Verificar la instalacion:
+Verificar las tablas:
 
 ```sql
 USE tostado_cafe;
@@ -131,503 +184,241 @@ SHOW TABLES;
 SELECT * FROM cafeteria_producto;
 ```
 
-### 3. Configurar las variables de entorno
+### Configurar credenciales en Windows
 
-Modificar el archivo `server/.env`:
-
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=TU_CONTRASENA_MYSQL
-DB_NAME=tostado_cafe
-PORT=3000
-```
-
-Variables adicionales soportadas por la API:
-
-```env
-JWT_SECRET=CAMBIA_ESTA_CLAVE_SECRETA
-JWT_EXPIRES_IN=8h
-CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,http://localhost:5500,http://127.0.0.1:5500
-MYSQLDUMP_PATH=C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe
-```
-
-`server/.env` contiene informacion privada y no debe agregarse al repositorio ni compartirse.
-
-## Ejecucion de la aplicacion
-
-### Opcion recomendada: un solo servidor Node
-
-Desde una terminal de PowerShell:
+Ejecutar los siguientes comandos en la terminal antes de iniciar Tomcat si MySQL usa credenciales distintas:
 
 ```powershell
-cd C:\Users\DELL\Desktop\tostado_cafeteria_\server
-node server.js
+$env:DB_HOST = "localhost"
+$env:DB_PORT = "3306"
+$env:DB_NAME = "tostado_cafe"
+$env:DB_USER = "root"
+$env:DB_PASSWORD = "TU_CONTRASENA_MYSQL"
 ```
 
-Mantener la terminal abierta mientras se usa la aplicacion.
+Las credenciales no se guardan dentro de las clases Java ni se deben subir al repositorio.
 
-Abrir el frontend:
+Si aparecen errores de autenticacion, comprobar primero que el usuario y la contrasena funcionan con MySQL Workbench o desde la terminal. El archivo [database.sql](database.sql) crea la estructura, pero no reemplaza una contrasena administrativa configurada directamente en MySQL.
 
-```text
-http://localhost:3000/
-```
+### Diferencia entre una contrasena de MySQL y una contrasena de empleado
 
-El servidor Express sirve la API y los archivos HTML, CSS y JavaScript.
+- `DB_PASSWORD` es la clave que Java usa para conectarse al servidor MySQL.
+- Las claves de empleados se almacenan como hashes BCrypt en `cafeteria_empleado.contrasena_hash`.
+- No se debe almacenar la contrasena original de un empleado en texto plano.
 
-### Opcion alternativa: frontend y API por separado
+[Passwords.java](src/main/java/com/tostado/cafeteria/config/Passwords.java) valida hashes nulos, incompletos o incompatibles antes de llamar a BCrypt. Esto evita errores como `Invalid salt revision`.
 
-Terminal 1, API:
+## Ejecutar el proyecto
+
+### Compilar y ejecutar pruebas
+
+Desde la raiz del proyecto:
 
 ```powershell
-cd C:\Users\DELL\Desktop\tostado_cafeteria_\server
-node server.js
+mvn clean test
 ```
 
-Terminal 2, frontend:
+### Generar el archivo WAR
 
 ```powershell
-cd C:\Users\DELL\Desktop\tostado_cafeteria_
-python -m http.server 8000
+mvn clean package
 ```
 
-Abrir:
+El archivo generado queda en:
 
 ```text
-http://127.0.0.1:8000/index.html
+target\tostado-cafeteria.war
 ```
 
-### Comprobar la API
+### Desplegar en Tomcat
 
-Estado principal:
+1. Detener Tomcat antes de reemplazar una version anterior.
+2. Copiar el WAR al directorio `webapps`:
+
+```powershell
+Copy-Item .\target\tostado-cafeteria.war `
+  "C:\Tools\apache-tomcat-10.1.31\webapps\tostado-cafeteria.war" -Force
+```
+
+3. Iniciar Tomcat.
+4. Abrir:
 
 ```text
-http://localhost:3000/
+http://localhost:8080/tostado-cafeteria/
 ```
 
-Estado de MySQL:
+## Acceso administrativo
 
-```text
-http://localhost:3000/api/health
-```
-
-Una respuesta correcta contiene:
-
-```json
-{
-  "ok": true,
-  "conexion": true,
-  "base": "tostado_cafe"
-}
-```
-
-## Acceso al sistema
-
-Credenciales de desarrollo:
+Credenciales de demostracion:
 
 ```text
 Usuario: admin
-Contraseña: admin123
+Contrasena: admin123
 ```
 
-La primera vez que se inicia sesion se cifra la contraseña temporal y se guarda su hash en la base de datos. El usuario debe cambiarse antes de un despliegue real.
+El ingreso se realiza desde el boton **Acceso del personal** en la pagina principal.
 
 ## Funcionalidades CRUD
 
-El sistema implementa operaciones de insercion, consulta, actualizacion y eliminacion sobre varias entidades.
+El sistema implementa insercion, consulta, actualizacion y eliminacion para recursos administrables:
 
-### Clientes
+- Clientes.
+- Productos.
+- Insumos.
+- Proveedores.
+- Empleados y cuentas.
+- Mesas.
+- Pedidos.
+- Pagos.
+- Recetas.
+- Compras de insumos.
 
-- Crear clientes desde la interfaz.
-- Consultar y buscar clientes por nombre, telefono o correo.
-- Editar nombre, telefono y correo.
-- Eliminar clientes.
-- Agregar puntos de fidelizacion.
+Las operaciones son procesadas por servlets Jakarta y el repositorio:
 
-Rutas principales:
+- [AppServlet.java](src/main/java/com/tostado/cafeteria/controller/AppServlet.java)
+- [CrudRepository.java](src/main/java/com/tostado/cafeteria/repository/CrudRepository.java)
 
-```text
-POST   /api/clientes
-GET    /api/clientes
-PATCH  /api/clientes/:id
-DELETE /api/clientes/:id
-PATCH  /api/clientes/:id/puntos
-```
+Las operaciones de cuentas utilizan:
 
-### Productos
+- `POST` para crear o actualizar una cuenta.
+- `DELETE` mediante `_method=DELETE` para eliminar una cuenta.
+- Consultas preparadas con `PreparedStatement`.
 
-- Crear productos del menu.
-- Consultar todos los productos o solo los disponibles.
-- Actualizar nombre, categoria, precio, descripcion, imagen y disponibilidad.
-- Desactivar un producto del menu mediante una eliminacion logica.
+## Mejoras implementadas
 
-```text
-GET    /api/admin/productos
-POST   /api/productos
-PATCH  /api/productos/:id
-DELETE /api/productos/:id
-```
+### Conexion y seguridad
 
-### Inventario
+- Conexion centralizada con MySQL Connector/J.
+- Configuracion mediante variables de entorno.
+- Uso de consultas preparadas.
+- Codificacion UTF-8.
+- Validacion segura de hashes BCrypt.
+- Proteccion ante hashes nulos o invalidos.
+- Contrasenas de cuentas almacenadas mediante hashes.
 
-- Crear insumos.
-- Consultar existencias y estados.
-- Actualizar cantidades y niveles minimos.
-- Desactivar insumos mediante una eliminacion logica.
+### Interfaz
 
-```text
-GET    /api/inventario
-POST   /api/inventario
-PATCH  /api/inventario/:id
-DELETE /api/inventario/:id
-```
+- Se reconstruyo la aplicacion en Java sin conservar la dependencia del frontend Node.js.
+- Se corrigieron errores de 404, rutas, codificacion y navegacion.
+- Se mantuvo el estilo original de Tostado Cafeteria.
+- La navegacion administrativa utiliza una barra blanca, limpia y consistente.
+- El Dashboard muestra ventas, pedidos, ticket promedio, productos y estados de pedidos.
+- Se agrego la pantalla de Gestion de Cuentas con tarjetas por usuario y resumen por rol.
+- Las paginas administrativas comparten la misma barra de navegacion y estilos.
 
-### Empleados
+### Cuentas
 
-- Crear empleados con usuario, rol y turno.
-- Consultar empleados.
-- Actualizar datos, contrasena, estado y permisos.
-- Eliminar empleados.
+- Crear cuentas con usuario, rol, turno y contrasena.
+- Editar cuentas existentes.
+- Eliminar cuentas desde la tarjeta correspondiente.
+- Conservar la contrasena actual cuando se edita una cuenta sin ingresar una nueva.
+- Mostrar resumenes de administradores, cajeros, baristas y otros roles.
+- Redirigir las operaciones correctamente a `/cuentas`.
 
-```text
-GET    /api/empleados
-POST   /api/empleados
-PATCH  /api/empleados/:id
-DELETE /api/empleados/:id
-```
+### Carrito y pedidos
 
-### Mesas
+- El catalogo publico conserva el diseño original.
+- Los productos se cargan desde MySQL.
+- Se puede agregar y quitar productos del carrito.
+- El carrito puede mostrar la cantidad, precio unitario y total.
+- Los pedidos pueden enviarse al backend Java.
 
-- Crear mesas.
-- Consultar y actualizar su estado.
-- Eliminar mesas.
+## Estructura principal
 
 ```text
-GET    /api/mesas
-POST   /api/mesas
-PATCH  /api/mesas/:id
-DELETE /api/mesas/:id
+tostado_cafeteria_/
+├── database.sql
+├── pom.xml
+├── README.md
+├── src/main/java/com/tostado/cafeteria/
+│   ├── config/
+│   ├── controller/
+│   ├── filter/
+│   ├── model/
+│   └── repository/
+└── src/main/webapp/
+    ├── WEB-INF/views/
+    ├── assets/
+    ├── css/
+    └── pedido.html
 ```
-
-## API principal
-
-### Ruta publica
-
-```text
-GET  /api/health
-GET  /api/productos
-GET  /api/mesas
-POST /api/auth/login
-POST /api/pedidos
-```
-
-### Rutas protegidas por JWT
-
-Las rutas protegidas requieren el encabezado:
-
-```http
-Authorization: Bearer <TOKEN_JWT>
-Content-Type: application/json
-```
-
-Roles disponibles:
-
-- `administrador`
-- `cajero`
-- `barista`
-- `mesero`
-
-Ejemplos de rutas protegidas:
-
-```text
-GET   /api/pedidos
-PATCH /api/pedidos/:id/estado
-POST  /api/pagos
-GET   /api/clientes
-GET   /api/empleados
-GET   /api/inventario
-```
-
-### Crear un pedido
-
-El frontend envia identificadores y cantidades. Los precios finales se consultan en MySQL desde el backend.
-
-Ejemplo con PowerShell:
-
-```powershell
-$body = @{
-    tipo = "local"
-    nombreCliente = "Juan Perez"
-    mesaId = 1
-    productos = @(
-        @{
-            productoId = 1
-            cantidad = 2
-        }
-    )
-} | ConvertTo-Json -Depth 4
-
-Invoke-RestMethod `
-    -Method Post `
-    -Uri "http://localhost:3000/api/pedidos" `
-    -ContentType "application/json" `
-    -Body $body
-```
-
-### Registrar un pago
-
-Primero se obtiene el token mediante el login:
-
-```powershell
-$login = @{
-    usuario = "admin"
-    password = "admin123"
-} | ConvertTo-Json
-
-$session = Invoke-RestMethod `
-    -Method Post `
-    -Uri "http://localhost:3000/api/auth/login" `
-    -ContentType "application/json" `
-    -Body $login
-
-$headers = @{
-    Authorization = "Bearer $($session.token)"
-}
-```
-
-Luego se registra el pago:
-
-```powershell
-$payment = @{
-    ordenId = 1
-    metodo = "efectivo"
-    monto = 20
-    cambio = 0
-} | ConvertTo-Json
-
-Invoke-RestMethod `
-    -Method Post `
-    -Uri "http://localhost:3000/api/pagos" `
-    -Headers $headers `
-    -ContentType "application/json" `
-    -Body $payment
-```
-
-Metodos de pago admitidos:
-
-- `efectivo`
-- `tarjeta`
-- `billetera`
-- `qr`
 
 ## Estandares de codificacion
 
-### Variables
-
-- JavaScript usa nombres en `camelCase`.
-- SQL usa identificadores descriptivos en minusculas.
-- Las variables deben indicar su contenido o comportamiento.
-
-Ejemplo:
-
-```javascript
-const selectedClientId = 10;
-const clientsResponse = await window.tostadoApiFetch("/api/clientes");
-```
-
-Evitar nombres sin contexto como `x`, `dato` o `lista2`.
-
-### Metodos y funciones
-
-- JavaScript usa verbos descriptivos en `camelCase`.
-- Las rutas Express usan nombres REST y parámetros claramente definidos.
-
-Ejemplos:
-
-```javascript
-async function loadClients() {}
-function renderClientTable() {}
-function validateClientData() {}
-```
-
-### Clases
-
-- Las clases SQL utilizan nombres descriptivos que representan entidades.
-- Las clases CSS usan nombres en minusculas, separados por guiones cuando sea necesario.
-
-Ejemplos:
-
-```css
-.client-page
-.clients-table
-.client-modal
-```
-
-### Paquetes y carpetas
-
-- El paquete principal del backend se encuentra en `server/`.
-- Las rutas web se mantienen separadas por archivos HTML.
-- Los recursos compartidos se organizan en `css/` y `js/`.
-
-### HTML y SQL
-
-- Los formularios deben usar `label` vinculados a cada control.
-- Los IDs de control deben ser unicos dentro de la pagina.
-- Las consultas SQL deben usar parametros `?`; no concatenar valores del usuario.
-- Las operaciones criticas deben comprobar permisos y datos enviados.
+- Clases en `PascalCase`: por ejemplo, `DatabaseConfig`, `CrudRepository`.
+- Metodos en `camelCase`: por ejemplo, `getConnection`, `dashboard`.
+- Variables en `camelCase`: por ejemplo, `database`, `passwordHash`.
+- Constantes en `UPPER_Snake_Case`: por ejemplo, `TABLES`.
+- Paquetes Java en minusculas y separados por puntos.
+- Los recursos de base de datos utilizan nombres permitidos para evitar SQL construido con entrada externa.
+- Las vistas JSP respetan codificacion UTF-8.
 
 ## Pruebas
 
-Desde la carpeta `server`:
+Ejecutar todas las pruebas:
 
 ```powershell
-npm.cmd test
+mvn test
 ```
 
 Las pruebas actuales verifican:
 
-- La ruta principal de la API.
-- La autenticacion requerida en pedidos.
-- La autenticacion requerida en pagos.
-
-## Copias de seguridad
-
-Crear una copia:
-
-```powershell
-cd C:\Users\DELL\Desktop\tostado_cafeteria_\server
-npm.cmd run backup
-```
-
-El respaldo se crea dentro de:
-
-```text
-server/backups/
-```
-
-Restaurar un respaldo:
-
-```powershell
-Get-Content .\server\backups\ARCHIVO.sql -Raw |
-  & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
-```
+- Hashes y validacion BCrypt.
+- Creacion y propiedades basicas de empleados.
 
 ## Solucion de problemas
 
-### PowerShell bloquea npm
+### `Invalid salt revision`
 
-Usar los comandos `.cmd`:
+El hash guardado en la base de datos no tiene un formato BCrypt valido.
 
-```powershell
-npm.cmd install
-npm.cmd start
-npm.cmd test
+La clase de validacion verifica el prefijo:
+
+```text
+$2a$
+$2b$
+$2y$
 ```
 
-Tambien es posible permitir scripts solo durante la sesion actual:
+Si una cuenta tiene un hash invalido, genere uno nuevo desde Java o restablezca la cuenta administrador.
 
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-npm start
+### `Unknown database tostado_cafe`
+
+Importar nuevamente `database.sql`.
+
+```sql
+CREATE DATABASE IF NOT EXISTS tostado_cafe;
+USE tostado_cafe;
 ```
 
-### Error de conexion con MySQL
+### `Communications link failure`
 
-Comprobar:
+Comprobar que:
 
-- El servicio MySQL esta iniciado.
-- `DB_HOST` y `DB_PORT` son correctos.
-- `DB_USER` y `DB_PASSWORD` coinciden con MySQL.
-- La base `tostado_cafe` fue creada.
-- El puerto MySQL es accesible.
+- El servicio MySQL este iniciado.
+- `DB_HOST` y `DB_PORT` sean correctos.
+- El usuario tenga acceso a la base.
+- El firewall permita el puerto `3306`.
 
-### Error ER_ACCESS_DENIED_ERROR
+### `HTTP 404`
 
-Actualizar `server/.env` con la contraseña real de MySQL y reiniciar el servidor Node.
+Verificar que el proyecto este desplegado con el nombre:
 
-### El puerto 3000 esta ocupado
-
-Cambiar temporalmente el puerto de la API en `server/.env`:
-
-```env
-PORT=3001
+```text
+tostado-cafeteria.war
 ```
 
-Si se cambia el puerto, actualizar las referencias de la API en el frontend.
+La ruta esperada es:
 
-### El origen esta bloqueado por CORS
-
-Agregar el origen exacto del frontend:
-
-```env
-CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+```text
+http://localhost:8080/tostado-cafeteria/dashboard
 ```
 
-### MySQL devuelve ETIMEDOUT
+### Caracteres extraños
 
-MySQL puede estar detenido, bloqueado por un firewall o escuchando en otro host. Verificar el puerto con:
+La base, las tablas y las vistas deben usar UTF-8:
 
-```powershell
-netstat -ano | findstr ":3306"
-```
-
-## Seguridad
-
-Antes de publicar el sistema:
-
-- Cambiar `JWT_SECRET` por una clave aleatoria.
-- Cambiar la contraseña temporal `admin123`.
-- Crear un usuario MySQL sin permisos administrativos.
-- Restringir `CORS_ORIGINS` a los dominios reales.
-- No subir `.env` ni respaldos SQL.
-- Usar HTTPS en un entorno de produccion.
-
-## Aplicación Jakarta Servlet/JSP para Tomcat 10.1
-
-El proyecto moderno se agrega junto al frontend y servidor Node.js originales, sin sustituirlos.
-
-### Requisitos Java
-
-- JDK 17.
-- Apache Maven 3.9.x.
-- Apache Tomcat 10.1.x.
-- MySQL 8 y el esquema de `database.sql`.
-
-### Compilar
-
-```powershell
-java -version
-mvn -version
-mvn clean verify
-```
-
-El resultado es `target/tostado-cafeteria.war`.
-
-### Configuración de MySQL
-
-Inicialice la base de datos con `database.sql`. Configure las credenciales mediante variables de entorno, nunca en el código:
-
-```powershell
-$env:DB_HOST="localhost"
-$env:DB_PORT="3306"
-$env:DB_NAME="tostado_cafe"
-$env:DB_USER="cafeteria_app"
-$env:DB_PASSWORD="<contraseña>"
-```
-
-### Despliegue
-
-1. Inicie MySQL.
-2. Implante el archivo WAR como `tostado-cafeteria.war` en Tomcat 10.1, o renómbrelo a `ROOT.war`.
-3. Configure las variables MySQL en el servicio/proceso de Tomcat.
-4. Abra `http://localhost:8080/tostado-cafeteria/login`.
-
-Las rutas están protegidas con sesión HTTP y verificación de rol. Los repositorios usan `PreparedStatement`. Las contraseñas se almacenan con BCrypt. El código original HTML/CSS/JavaScript y Express permanece disponible y no se reemplaza.
-
-### Pruebas
-
-```powershell
-mvn test
-mvn clean verify
-```
+- Juego de caracteres: `utf8mb4`.
+- Colacion: `utf8mb4_unicode_ci`.
+- JSP con `charset=UTF-8`.
+- MySQL URL con `characterEncoding=UTF-8`.
