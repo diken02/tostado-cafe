@@ -16,7 +16,7 @@ public class AuthFilter implements Filter {
 
     /** Rutas reservadas para administradores. */
     private static final Set<String> ADMIN = Set.of("/admin/empleados", "/admin/productos",
-            "/admin/proveedores", "/admin/insumos");
+            "/admin/proveedores", "/admin/insumos", "/admin/sugerencias");
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)

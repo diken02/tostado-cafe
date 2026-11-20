@@ -112,7 +112,61 @@
     <p>Elige tus favoritos y agrégalos a tu pedido.</p>
   </div>
   <main class="products" id="products"></main>
+
+  <section style="max-width:900px;margin:0 auto;padding:0 16px 40px">
+    <h2>Comentarios</h2>
+    <form id="commentForm" style="display:grid;gap:8px">
+      <input name="nombre" maxlength="80" placeholder="Tu nombre" required>
+      <textarea name="mensaje" maxlength="500" rows="3" placeholder="Escribe tu comentario (será público)" required></textarea>
+      <button type="submit">Publicar comentario</button>
+    </form>
+    <div id="commentList"></div>
+
+    <h2>Sugerencias</h2>
+    <p style="font-size:13px">Las sugerencias son privadas: solo las ve la administración.</p>
+    <form id="suggestionForm" style="display:grid;gap:8px">
+      <input name="nombre" maxlength="80" placeholder="Tu nombre" required>
+      <textarea name="mensaje" maxlength="500" rows="3" placeholder="Escribe tu sugerencia" required></textarea>
+      <button type="submit">Enviar sugerencia</button>
+    </form>
+    <p id="suggestionMsg"></p>
+  </section>
 </div>
+
+<script>
+  // Comentarios públicos y sugerencias privadas.
+  (function () {
+    var list = document.getElementById('commentList');
+    function loadComments() {
+      fetch('api/comentarios').then(function (r) { return r.json(); }).then(function (items) {
+        list.innerHTML = '';
+        items.forEach(function (c) {
+          var p = document.createElement('p');
+          var b = document.createElement('strong');
+          b.textContent = c.nombre;
+          p.appendChild(b);
+          p.appendChild(document.createTextNode(': ' + c.mensaje));
+          list.appendChild(p);
+        });
+      });
+    }
+    function send(form, url, done) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        fetch(url, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: new URLSearchParams(new FormData(form)).toString()
+        }).then(function (r) { if (r.ok) { form.reset(); done(); } });
+      });
+    }
+    send(document.getElementById('commentForm'), 'api/comentarios', loadComments);
+    send(document.getElementById('suggestionForm'), 'api/sugerencias', function () {
+      document.getElementById('suggestionMsg').textContent = '¡Gracias! Tu sugerencia fue enviada.';
+    });
+    loadComments();
+  })();
+</script>
 
 <button class="cart-overlay" id="cartOverlay" type="button" aria-label="Cerrar pedido"></button>
 <button class="floating-cart" id="floatingCart" type="button" aria-label="Ver pedido actual">
