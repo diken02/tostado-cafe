@@ -1,6 +1,6 @@
 # Tostado Cafeteria - Inicio rapido Java
 
-Aplicacion web Java 17 con Jakarta Servlet, JSP, Maven, MySQL y Apache Tomcat 10.
+El sistema de gestion de la cafeteria se desarrolla conforme a sus necesidades operativas, utilizando Java 17 y Jakarta Servlet/JSP para crear una aplicacion web modular. Maven facilita la compilacion y la gestion de dependencias, MySQL almacena la informacion y Apache Tomcat aloja la aplicacion. El desarrollo se organiza de forma iterativa para validar las funcionalidades y realizar ajustes oportunos.
 
 ## Requisitos
 
