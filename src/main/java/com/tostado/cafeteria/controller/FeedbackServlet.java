@@ -140,13 +140,30 @@ public class FeedbackServlet extends HttpServlet {
         }
         response.setContentType("text/html;charset=UTF-8");
         StringBuilder html = new StringBuilder("<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"UTF-8\">"
-                + "<title>Sugerencias</title><link rel=\"stylesheet\" href=\"" + request.getContextPath()
+                + "<title>Comentarios y sugerencias</title><link rel=\"stylesheet\" href=\""
+                + request.getContextPath()
                 + "/css/styles.css\"></head><body style=\"padding:24px;font-family:sans-serif\">"
-                + "<h1>Sugerencias privadas</h1><p><a href=\"" + request.getContextPath()
-                + "/dashboard\">Volver al panel</a></p><ul>");
-        try (Connection connection = DatabaseConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "SELECT nombre, mensaje, creado FROM cafeteria_sugerencia ORDER BY id DESC");
+                + "<h1>Comentarios y sugerencias</h1><p><a href=\"" + request.getContextPath()
+                + "/dashboard\">Volver al panel</a></p>");
+        try (Connection connection = DatabaseConfig.getConnection()) {
+            appendList(html, connection, "Sugerencias (privadas)", "cafeteria_sugerencia",
+                    "Aún no hay sugerencias.");
+            appendList(html, connection, "Comentarios (públicos)", "cafeteria_comentario",
+                    "Aún no hay comentarios.");
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        response.getWriter().write(html.append("</body></html>").toString());
+    }
+
+    /** Agrega un apartado con los registros de una tabla (nombre fijo, no proviene del usuario). */
+    private void appendList(StringBuilder html, Connection connection, String title, String table,
+                            String emptyText) throws SQLException {
+        html.append("<h2>").append(title).append("</h2><ul>");
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT nombre, mensaje, creado FROM " + table + " ORDER BY id DESC");
              ResultSet rows = statement.executeQuery()) {
             boolean any = false;
             while (rows.next()) {
@@ -156,14 +173,10 @@ public class FeedbackServlet extends HttpServlet {
                         .append(html(rows.getString("mensaje"))).append("</li>");
             }
             if (!any) {
-                html.append("<li>Aún no hay sugerencias.</li>");
+                html.append("<li>").append(emptyText).append("</li>");
             }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
         }
-        response.getWriter().write(html.append("</ul></body></html>").toString());
+        html.append("</ul>");
     }
 
     /** Recorta espacios y limita la longitud; devuelve cadena vacía si es nulo. */
