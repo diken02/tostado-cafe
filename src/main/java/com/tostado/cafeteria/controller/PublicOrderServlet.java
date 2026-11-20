@@ -13,11 +13,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * API pública (JSON) para la página de pedidos de clientes: lista el menú
+ * ({@code GET /api/productos}) y registra pedidos ({@code POST /api/pedidos}).
+ */
 @WebServlet(urlPatterns={"/api/productos","/api/pedidos"})
 public class PublicOrderServlet extends HttpServlet {
+
+    /** Expresión que extrae {productoId, cantidad} de cada ítem del cuerpo JSON. */
     private static final Pattern PRODUCT_ITEM =
             Pattern.compile("\\{\"productoId\"\\s*:\\s*(\\d+)\\s*,\\s*\"cantidad\"\\s*:\\s*(\\d+)\\}");
 
+    /** Devuelve el menú de productos disponibles en formato JSON. */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
@@ -56,6 +63,7 @@ public class PublicOrderServlet extends HttpServlet {
         response.getWriter().write(json.toString());
     }
 
+    /** Registra un pedido recibido como JSON y devuelve su resultado. */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");

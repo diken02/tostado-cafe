@@ -4,9 +4,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Configuración de la conexión JDBC a MySQL, leída de variables de entorno
+ * (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD) con valores por defecto.
+ */
 public final class DatabaseConfig {
-    private DatabaseConfig() {}
 
+    /** Clase de utilidades: no se instancia. */
+    private DatabaseConfig() {
+    }
+
+    /**
+     * Abre una nueva conexión a la base de datos.
+     *
+     * @return conexión que el llamador debe cerrar
+     * @throws SQLException si falta el driver o falla la conexión
+     */
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -23,6 +36,7 @@ public final class DatabaseConfig {
         return DriverManager.getConnection(url, user, password);
     }
 
+    /** Lee una variable de entorno, usando {@code fallback} si no existe o está vacía. */
     private static String env(String name, String fallback) {
         String value = System.getenv(name);
         return value == null || value.isBlank() ? fallback : value;
