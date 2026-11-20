@@ -79,6 +79,13 @@ Abre:
 - Pedidos publicos: http://localhost:8080/tostado-cafeteria/pedido.html
 - Dashboard: http://localhost:8080/tostado-cafeteria/dashboard
 
+## Comentarios y sugerencias
+
+- **Comentarios (publicos):** en `pedido.html` cualquier cliente puede publicar un comentario y todos lo ven. API: `GET/POST /api/comentarios`.
+- **Sugerencias (privadas):** se envian desde `pedido.html` (boton **Sugerencias**) con `POST /api/sugerencias` y no se muestran al publico.
+- **Vista de administracion:** `/admin/sugerencias` (enlace **Comentarios** en el menu) lista sugerencias y comentarios. Requiere iniciar sesion con rol `administrador`.
+- Las tablas `cafeteria_comentario` y `cafeteria_sugerencia` se crean automaticamente al iniciar la aplicacion; no hace falta ejecutar SQL adicional.
+
 ## Detener el sistema
 
 ```powershell
